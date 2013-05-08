@@ -1,3 +1,5 @@
+package beholder;
+
 public class PlayerCharacter {
 
     private String name;
