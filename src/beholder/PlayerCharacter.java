@@ -33,9 +33,14 @@ public class PlayerCharacter {
 
     private String name;
     private Race race;
+    private PCClass pcClass;
+    private PowerSource powerSource;
 
     private int experience;
     private int level;
+
+    private int maxHealth;
+    private int hpPerLevel;
     private int health;
     private int bloodied;
     private int healingSurge;
@@ -48,6 +53,7 @@ public class PlayerCharacter {
     private Vision vision;
     private Size size;
     private Vector<WeaponType> weaponProficiencies;
+    private Vector<ArmorType> armorProficiencies;
     
     // Ability Scores
     private int strength;
@@ -99,7 +105,16 @@ public class PlayerCharacter {
     private int will;
 
     // resistances
+    private int acidResistance;
+    private int coldResistance;
     private int fireResistance;
+    private int forceResistance;
+    private int lightningResistance;
+    private int necroticResistance;
+    private int poisonResistance;
+    private int psychicResistance;
+    private int radiantResistance;
+    private int thunderResistance;
 
     // Backpack
     private int encumbrance;
@@ -112,9 +127,13 @@ public class PlayerCharacter {
         HALFELF, HALFLING, HUMAN, TIEFLING
     }
 
-    private enum Class {
+    private enum PCClass {
         CLERIC, FIGHTER, PALADIN, RANGER, 
         ROGUE, WARLOCK, WARLORD, WIZARD
+    }
+
+    private enum PowerSource {
+        ARCANE, DIVINE, MARTIAL, OTHER
     }
 
     private enum Skill {
@@ -150,13 +169,22 @@ public class PlayerCharacter {
 
     private enum WeaponType {
         UNARMED, CLUB, DAGGER, JAVELIN, MACE, SICKLE,
-        SPEAR, GREATCLUB, MORNINGSTAR, QUATERSTAFF, 
+        SPEAR, GREATCLUB, MORNINGSTAR, QUARTERSTAFF, 
         SCYTHE, BATTLEAXE, FLAIL, HANDAXE, LONGSWORD,
         SCIMITAR, SHORTSWORD, THROWINGHAMMER, WARHAMMER,
         WARPICK, FALCHION, GLAIVE, GREATAXE, GREATSWORD,
         HALBERD, HEAVYFLAIL, LONGSPEAR, MAUL, BASTARDSWORD,
         KATAR, RAPIER, SPIKEDCHAIN, HANDCROSSBOW, SLING,
         CROSSBOW, LONGBOW, SHORTBOW, SHURIKEN
+    }
+
+    private enum ArmorGroup {
+        LIGHT, HEAVY
+    }
+
+    private enum ArmorType {
+        CLOTH, LEATHER, HIDE, CHAINMAIL, SCALE, PLATE,
+        LIGHTSHIELD, HEAVYSHIELD
     }
 
     /*
@@ -215,9 +243,19 @@ public class PlayerCharacter {
         }
     }
 
-    public void addWeaponProficiency(WeaponType wt) {
-        if (!this.weaponProficiencies.contains(wt)) {
-            this.weaponProficiencies.add(wt);
+    public void addWeaponProficiencies(WeaponType[] wts) {
+        for (int i = 0; i < wts.length; i++) {
+            if (!this.weaponProficiencies.contains(wts[i])) {
+                this.weaponProficiencies.add(wts[i]);
+            }
+        }
+    }
+
+    public void addArmorProficiencies(ArmorType[] ats) {
+        for (int i = 0; i < ats.length; i++) {
+            if (!this.armorProficiencies.contains(ats[i])) {
+                this.armorProficiencies.add(ats[i]);
+            }
         }
     }
 
@@ -229,8 +267,8 @@ public class PlayerCharacter {
         }
     }
 
-    public void setRace(Race race) {
-        switch (race) {
+    public void setRace(Race r) {
+        switch (r) {
             case DRAGONBORN:
                 this.size = Size.MEDIUM;
                 this.speed = 6;
@@ -276,7 +314,7 @@ public class PlayerCharacter {
                 this.history += 2;
 
                 // weapon proficiencies
-                this.addWeaponProficiency(WeaponType.LONGSWORD);
+                this.addWeaponProficiencies(new WeaponType[] {WeaponType.LONGSWORD});
 
                 // eladrin education: extra skill
                 this.numSkillTrainsLeft++;
@@ -300,8 +338,8 @@ public class PlayerCharacter {
                 this.perception += 2;
 
                 // weapon proficiencies
-                this.addWeaponProficiency(WeaponType.LONGBOW);
-                this.addWeaponProficiency(WeaponType.SHORTBOW);
+                WeaponType[] wts = {WeaponType.LONGBOW, WeaponType.SHORTBOW};
+                this.addWeaponProficiencies(wts);
 
                 break;
             case HALFELF:
@@ -373,6 +411,294 @@ public class PlayerCharacter {
                 this.fireResistance += 5;
                 break;
         }
+    }
+
+    public void setClass(PCClass c) {
+        ArmorType[] ats;
+        WeaponType[] wts;
+
+        switch (c) {
+            case CLERIC:
+                this.powerSource = PowerSource.DIVINE;
+
+                // armor proficiencies
+                ats = new ArmorType[] {
+                    ArmorType.CLOTH, ArmorType.LEATHER,
+                    ArmorType.HIDE, ArmorType.CHAINMAIL
+                };
+                this.addArmorProficiencies(ats);
+
+                // weapon proficiencies
+                // simple melee, simple ranged
+                wts = new WeaponType[] {
+                    WeaponType.CLUB, WeaponType.DAGGER, WeaponType.JAVELIN,
+                    WeaponType.MACE, WeaponType.SICKLE, WeaponType.SPEAR,
+                    WeaponType.GREATCLUB, WeaponType.MORNINGSTAR, WeaponType.QUARTERSTAFF,
+                    WeaponType.SCYTHE, WeaponType.HANDCROSSBOW, WeaponType.SLING, WeaponType.CROSSBOW
+                };
+                this.addWeaponProficiencies(wts);
+
+                // defense buffs
+                this.will += 2;
+
+                // set hit points (at this point the PC should be level 1)
+                this.hpPerLevel = 5;
+                this.maxHealth = 12 + this.constitution + (this.level-1)*this.hpPerLevel;
+                this.numHealingSurges = 7 + this.constitutionMod;
+
+                // trained skills
+                this.religion += 5;
+                this.numSkillTrainsLeft += 3;
+
+                break;
+            case FIGHTER:
+                this.powerSource = PowerSource.MARTIAL;
+
+                // armor proficiencies
+                ats = new ArmorType[] {
+                    ArmorType.CLOTH, ArmorType.LEATHER, ArmorType.HIDE,
+                    ArmorType.CHAINMAIL, ArmorType.SCALE, 
+                    ArmorType.LIGHTSHIELD, ArmorType.HEAVYSHIELD
+                };
+                this.addArmorProficiencies(ats);
+
+                // weapon proficiencies
+                // simple melee, simple ranged, military melee, military ranged
+                wts = new WeaponType[] {
+                    WeaponType.CLUB, WeaponType.DAGGER, WeaponType.JAVELIN,
+                    WeaponType.MACE, WeaponType.SICKLE, WeaponType.SPEAR,
+                    WeaponType.GREATCLUB, WeaponType.MORNINGSTAR, WeaponType.QUARTERSTAFF,WeaponType.SCYTHE, 
+                    WeaponType.HANDCROSSBOW, WeaponType.SLING, WeaponType.CROSSBOW,
+                    WeaponType.BATTLEAXE, WeaponType.FLAIL, WeaponType.HANDAXE, WeaponType.LONGSWORD,
+                    WeaponType.SCIMITAR, WeaponType.SHORTSWORD, WeaponType.THROWINGHAMMER, WeaponType.WARHAMMER,
+                    WeaponType.WARPICK, WeaponType.FALCHION, WeaponType.GLAIVE, WeaponType.GREATAXE, 
+                    WeaponType.GREATSWORD, WeaponType.HALBERD, WeaponType.HEAVYFLAIL, WeaponType.LONGSPEAR, WeaponType.MAUL,
+                    WeaponType.LONGBOW, WeaponType.SHORTBOW
+                };
+                this.addWeaponProficiencies(wts);
+
+                // defense buffs
+                this.fortitude += 2;
+
+                // set hit points (at this point the PC should be level 1)
+                this.hpPerLevel = 6;
+                this.maxHealth = 15 + this.constitution + (this.level-1)*this.hpPerLevel;
+                this.numHealingSurges = 9 + this.constitutionMod;
+
+                // trained skills
+                this.numSkillTrainsLeft += 3;
+
+                break;
+            case PALADIN:
+                this.powerSource = PowerSource.DIVINE;
+
+                // armor proficiencies
+                ats = new ArmorType[] {
+                    ArmorType.CLOTH, ArmorType.LEATHER, ArmorType.HIDE,
+                    ArmorType.CHAINMAIL, ArmorType.SCALE, ArmorType.PLATE,
+                    ArmorType.LIGHTSHIELD, ArmorType.HEAVYSHIELD
+                };
+                this.addArmorProficiencies(ats);
+
+                // weapon proficiencies
+                // simple melee, simple ranged, military melee, military ranged
+                wts = new WeaponType[] {
+                    WeaponType.CLUB, WeaponType.DAGGER, WeaponType.JAVELIN,
+                    WeaponType.MACE, WeaponType.SICKLE, WeaponType.SPEAR,
+                    WeaponType.GREATCLUB, WeaponType.MORNINGSTAR, WeaponType.QUARTERSTAFF,WeaponType.SCYTHE, 
+                    WeaponType.HANDCROSSBOW, WeaponType.SLING, WeaponType.CROSSBOW,
+                    WeaponType.BATTLEAXE, WeaponType.FLAIL, WeaponType.HANDAXE, WeaponType.LONGSWORD,
+                    WeaponType.SCIMITAR, WeaponType.SHORTSWORD, WeaponType.THROWINGHAMMER, WeaponType.WARHAMMER,
+                    WeaponType.WARPICK, WeaponType.FALCHION, WeaponType.GLAIVE, WeaponType.GREATAXE, 
+                    WeaponType.GREATSWORD, WeaponType.HALBERD, WeaponType.HEAVYFLAIL, WeaponType.LONGSPEAR, WeaponType.MAUL
+                };
+                this.addWeaponProficiencies(wts);
+
+                // defense buffs
+                this.fortitude++;
+                this.reflex++;
+                this.will++;
+
+                // set hit points (at this point the PC should be level 1)
+                this.hpPerLevel = 6;
+                this.maxHealth = 15 + this.constitution + (this.level-1)*this.hpPerLevel;
+                this.numHealingSurges = 10 + this.constitutionMod;
+
+                // trained skills
+                this.numSkillTrainsLeft += 3;
+
+                break;
+            case RANGER:
+                this.powerSource = PowerSource.MARTIAL;
+
+                // armor proficiencies
+                ats = new ArmorType[] {
+                    ArmorType.CLOTH, ArmorType.LEATHER, ArmorType.HIDE,
+                };
+                this.addArmorProficiencies(ats);
+
+                // weapon proficiencies
+                // simple melee, simple ranged, military melee, military ranged
+                wts = new WeaponType[] {
+                    WeaponType.CLUB, WeaponType.DAGGER, WeaponType.JAVELIN,
+                    WeaponType.MACE, WeaponType.SICKLE, WeaponType.SPEAR,
+                    WeaponType.GREATCLUB, WeaponType.MORNINGSTAR, WeaponType.QUARTERSTAFF,WeaponType.SCYTHE, 
+                    WeaponType.HANDCROSSBOW, WeaponType.SLING, WeaponType.CROSSBOW,
+                    WeaponType.BATTLEAXE, WeaponType.FLAIL, WeaponType.HANDAXE, WeaponType.LONGSWORD,
+                    WeaponType.SCIMITAR, WeaponType.SHORTSWORD, WeaponType.THROWINGHAMMER, WeaponType.WARHAMMER,
+                    WeaponType.WARPICK, WeaponType.FALCHION, WeaponType.GLAIVE, WeaponType.GREATAXE, 
+                    WeaponType.GREATSWORD, WeaponType.HALBERD, WeaponType.HEAVYFLAIL, WeaponType.LONGSPEAR, WeaponType.MAUL,
+                    WeaponType.LONGBOW, WeaponType.SHORTBOW    
+                };
+                this.addWeaponProficiencies(wts);
+
+                // defense buffs
+                this.fortitude++;
+                this.reflex++;
+
+                // set hit points (at this point the PC should be level 1)
+                this.hpPerLevel = 5;
+                this.maxHealth = 12 + this.constitution + (this.level-1)*this.hpPerLevel;
+                this.numHealingSurges = 6 + this.constitutionMod;
+
+                // trained skills
+                this.numSkillTrainsLeft += 5;
+
+                break;
+            case ROGUE:
+                this.powerSource = PowerSource.MARTIAL;
+
+                // armor proficiencies
+                ats = new ArmorType[] {
+                    ArmorType.CLOTH, ArmorType.LEATHER
+                };
+                this.addArmorProficiencies(ats);
+
+                // weapon proficiencies
+                // simple melee, simple ranged, military melee, military ranged
+                wts = new WeaponType[] {
+                    WeaponType.DAGGER, WeaponType.HANDCROSSBOW, WeaponType.SHURIKEN, 
+                    WeaponType.SLING, WeaponType.SHORTSWORD
+                };
+                this.addWeaponProficiencies(wts);
+
+                // defense buffs
+                this.reflex += 2;
+
+                // set hit points (at this point the PC should be level 1)
+                this.hpPerLevel = 5;
+                this.maxHealth = 12 + this.constitution + (this.level-1)*this.hpPerLevel;
+                this.numHealingSurges = 6 + this.constitutionMod;
+
+                // trained skills
+                this.stealth += 5;
+                this.thievery += 5;
+                this.numSkillTrainsLeft += 4;
+
+                break;
+            case WARLOCK:
+                this.powerSource = PowerSource.ARCANE;
+
+                // armor proficiencies
+                ats = new ArmorType[] {
+                    ArmorType.CLOTH, ArmorType.LEATHER
+                };
+                this.addArmorProficiencies(ats);
+
+                // weapon proficiencies
+                // simple melee, simple ranged, military melee, military ranged
+                wts = new WeaponType[] {
+                    WeaponType.CLUB, WeaponType.DAGGER, WeaponType.JAVELIN,
+                    WeaponType.MACE, WeaponType.SICKLE, WeaponType.SPEAR,
+                    WeaponType.GREATCLUB, WeaponType.MORNINGSTAR, WeaponType.QUARTERSTAFF,
+                    WeaponType.SCYTHE, WeaponType.HANDCROSSBOW, WeaponType.SLING, WeaponType.CROSSBOW
+                };
+                this.addWeaponProficiencies(wts);
+
+                // TODO: implements
+
+                // defense buffs
+                this.will++;
+                this.reflex++;
+
+                // set hit points (at this point the PC should be level 1)
+                this.hpPerLevel = 5;
+                this.maxHealth = 12 + this.constitution + (this.level-1)*this.hpPerLevel;
+                this.numHealingSurges = 6 + this.constitutionMod;
+
+                // trained skills
+                this.numSkillTrainsLeft += 4;
+
+                break;
+            case WARLORD:
+                this.powerSource = PowerSource.MARTIAL;
+
+                // armor proficiencies
+                ats = new ArmorType[] {
+                    ArmorType.CLOTH, ArmorType.LEATHER, ArmorType.HIDE,
+                    ArmorType.CHAINMAIL, ArmorType.LIGHTSHIELD
+                };
+                this.addArmorProficiencies(ats);
+
+                // weapon proficiencies
+                // simple melee, simple ranged, military melee, military ranged
+                wts = new WeaponType[] {
+                    WeaponType.CLUB, WeaponType.DAGGER, WeaponType.JAVELIN,
+                    WeaponType.MACE, WeaponType.SICKLE, WeaponType.SPEAR,
+                    WeaponType.GREATCLUB, WeaponType.MORNINGSTAR, WeaponType.QUARTERSTAFF,WeaponType.SCYTHE, 
+                    WeaponType.HANDCROSSBOW, WeaponType.SLING, WeaponType.CROSSBOW,
+                    WeaponType.BATTLEAXE, WeaponType.FLAIL, WeaponType.HANDAXE, WeaponType.LONGSWORD,
+                    WeaponType.SCIMITAR, WeaponType.SHORTSWORD, WeaponType.THROWINGHAMMER, WeaponType.WARHAMMER,
+                    WeaponType.WARPICK, WeaponType.FALCHION, WeaponType.GLAIVE, WeaponType.GREATAXE, 
+                    WeaponType.GREATSWORD, WeaponType.HALBERD, WeaponType.HEAVYFLAIL, WeaponType.LONGSPEAR, WeaponType.MAUL
+                };
+                this.addWeaponProficiencies(wts);
+
+                // defense buffs
+                this.fortitude++;
+                this.will++;
+
+                // set hit points (at this point the PC should be level 1)
+                this.hpPerLevel = 5;
+                this.maxHealth = 12 + this.constitution + (this.level-1)*this.hpPerLevel;
+                this.numHealingSurges = 7 + this.constitutionMod;
+
+                // trained skills
+                this.numSkillTrainsLeft += 4;
+
+                break;
+            case WIZARD:
+                this.powerSource = PowerSource.ARCANE;
+
+                // armor proficiencies
+                ats = new ArmorType[] {ArmorType.CLOTH};
+                this.addArmorProficiencies(ats);
+
+                // weapon proficiencies
+                // simple melee, simple ranged, military melee, military ranged
+                wts = new WeaponType[] {
+                    WeaponType.DAGGER, WeaponType.QUARTERSTAFF,
+                };
+                this.addWeaponProficiencies(wts);
+
+                // TODO: implements
+
+                // defense buffs
+                this.will += 2;
+
+                // set hit points (at this point the PC should be level 1)
+                this.hpPerLevel = 4;
+                this.maxHealth = 10 + this.constitution + (this.level-1)*this.hpPerLevel;
+                this.numHealingSurges = 6 + this.constitutionMod;
+
+                // trained skills
+                this.arcana += 5;
+                this.numSkillTrainsLeft += 3;
+
+                break;
+        }
+
+        this.pcClass = c;
     }
 
     public void levelUp() {
