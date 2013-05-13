@@ -53,6 +53,7 @@ public class PlayerCharacter {
     private Vision vision;
     private Size size;
     private Vector<WeaponType> weaponProficiencies;
+    private Vector<ImplementType> implementProficiencies;
     private Vector<ArmorType> armorProficiencies;
     
     // Ability Scores
@@ -178,6 +179,10 @@ public class PlayerCharacter {
         CROSSBOW, LONGBOW, SHORTBOW, SHURIKEN
     }
 
+    private enum ImplementType {
+        ORB, STAFF, WAND, ROD, HOLYSYMBOL
+    }
+
     private enum ArmorGroup {
         LIGHT, HEAVY
     }
@@ -247,6 +252,14 @@ public class PlayerCharacter {
         for (int i = 0; i < wts.length; i++) {
             if (!this.weaponProficiencies.contains(wts[i])) {
                 this.weaponProficiencies.add(wts[i]);
+            }
+        }
+    }
+
+    public void addImplementProficiencies(ImplementType[] its) {
+        for (int i = 0; i < its.length; i++) {
+            if (!this.implementProficiencies.contains(its[i])) {
+                this.implementProficiencies.add(its[i]);
             }
         }
     }
@@ -416,6 +429,7 @@ public class PlayerCharacter {
     public void setClass(PCClass c) {
         ArmorType[] ats;
         WeaponType[] wts;
+        ImplementType[] its;
 
         switch (c) {
             case CLERIC:
@@ -513,6 +527,10 @@ public class PlayerCharacter {
                     WeaponType.GREATSWORD, WeaponType.HALBERD, WeaponType.HEAVYFLAIL, WeaponType.LONGSPEAR, WeaponType.MAUL
                 };
                 this.addWeaponProficiencies(wts);
+
+                // implement proficiencies
+                its = new ImplementType[] {ImplementType.HOLYSYMBOL};
+                this.addImplementProficiencies(its);
 
                 // defense buffs
                 this.fortitude++;
@@ -615,7 +633,11 @@ public class PlayerCharacter {
                 };
                 this.addWeaponProficiencies(wts);
 
-                // TODO: implements
+                // implement proficiencies
+                its = new ImplementType[] {
+                    ImplementType.ROD, ImplementType.WAND
+                };
+                this.addImplementProficiencies(its);
 
                 // defense buffs
                 this.will++;
@@ -681,7 +703,11 @@ public class PlayerCharacter {
                 };
                 this.addWeaponProficiencies(wts);
 
-                // TODO: implements
+                // implement proficiencies
+                its = new ImplementType[] {
+                    ImplementType.ORB, ImplementType.STAFF, ImplementType.WAND
+                };
+                this.addImplementProficiencies(its);
 
                 // defense buffs
                 this.will += 2;
