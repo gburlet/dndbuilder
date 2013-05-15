@@ -2,10 +2,10 @@ package beholder;
 
 /*
  * Steps for character creation:
- * 1. Choose Race. Decide the race of your character. Your choice of race offers 
- *    several racial advantages to your character.
- * 2. Choose Class. Your class represents your training or profession, and it is 
+ * 1. Choose Class. Your class represents your training or profession, and it is 
  *    the most important part of your character’s capabilities.
+ * 2. Choose Race. Decide the race of your character. Your choice of race offers 
+ *    several racial advantages to your character.
  * 3. Determine Ability Scores. Generate your ability scores. Your ability scores 
  *    describe the fundamental strengths of your body and mind. Your race adjusts 
  *    the scores you generate, and different classes rely on different ability scores. 
@@ -34,97 +34,97 @@ import beholder.Die;
  */
 public class PlayerCharacter {
 
-    private String name;
-    private Race race;
-    private PCClass pcClass;
-    private PowerSource powerSource;
+    protected String name;
+    protected Race race;
+    protected PCClass pcClass;
+    protected PowerSource powerSource;
 
-    private int experience;
-    private int level;
+    protected int experience;
+    protected int level;
 
-    private int maxHealth;
-    private int hpPerLevel;
-    private int health;
-    private int bloodied;
-    private int healingSurge;
-    private int numHealingSurges;
+    protected int maxHealth;
+    protected int hpPerLevel;
+    protected int health;
+    protected int bloodied;
+    protected int healingSurge;
+    protected int numHealingSurges;
 
-    private int height;         // inches
-    private int weight;         // lbs
-    private int speed;          // squares
-    private Vector<Language> languages;
-    private Vision vision;
-    private Size size;
-    private Vector<WeaponType> weaponProficiencies;
-    private Vector<ImplementType> implementProficiencies;
-    private Vector<ArmorType> armorProficiencies;
+    protected int height;         // inches
+    protected int weight;         // lbs
+    protected int speed;          // squares
+    protected Vector<Language> languages;
+    protected Vision vision;
+    protected Size size;
+    protected Vector<WeaponType> weaponProficiencies;
+    protected Vector<ImplementType> implementProficiencies;
+    protected Vector<ArmorType> armorProficiencies;
     
     // Ability Scores
-    private int strength;
-    private int strengthMod;
-    private int constitution;
-    private int constitutionMod;
-    private int dexterity;
-    private int dexterityMod;
-    private int intelligence;
-    private int intelligenceMod;
-    private int wisdom;
-    private int wisdomMod;
-    private int charisma;
-    private int charismaMod;
+    protected int strength;
+    protected int strengthMod;
+    protected int constitution;
+    protected int constitutionMod;
+    protected int dexterity;
+    protected int dexterityMod;
+    protected int intelligence;
+    protected int intelligenceMod;
+    protected int wisdom;
+    protected int wisdomMod;
+    protected int charisma;
+    protected int charismaMod;
 
     // Skill Values
-    private int acrobatics;
-    private int arcana;
-    private int athletics;
-    private int bluff;
-    private int diplomacy;
-    private int dungeoneering;
-    private int endurance;
-    private int heal;
-    private int history;
-    private int insight;
-    private int intimidate;
-    private int nature;
-    private int perception;
-    private int religion;
-    private int stealth;
-    private int streetwise;
-    private int thievery;
+    protected int acrobatics;
+    protected int arcana;
+    protected int athletics;
+    protected int bluff;
+    protected int diplomacy;
+    protected int dungeoneering;
+    protected int endurance;
+    protected int heal;
+    protected int history;
+    protected int insight;
+    protected int intimidate;
+    protected int nature;
+    protected int perception;
+    protected int religion;
+    protected int stealth;
+    protected int streetwise;
+    protected int thievery;
 
     // PC maitenance
-    private int numSkillTrainsLeft;
-    private int numLanguagesLeft;
-    private int numAbilitiesLeft;
-    private int numFeatsLeft;
-    private int numAtWillPowersLeft;
-    private int numEncounterPowersLeft;
-    private int numDailyPowersLeft;
-    private int numUtilityPowersLeft;
+    protected int numSkillTrainsLeft;
+    protected int numLanguagesLeft;
+    protected int numAbilitiesLeft;
+    protected int numFeatsLeft;
+    protected int numAtWillPowersLeft;
+    protected int numEncounterPowersLeft;
+    protected int numDailyPowersLeft;
+    protected int numUtilityPowersLeft;
 
     // defenses 
-    private int armorClass;
-    private int fortitude;
-    private int reflex;
-    private int will;
+    protected int armorClass;
+    protected int fortitude;
+    protected int reflex;
+    protected int will;
 
     // resistances
-    private int acidResistance;
-    private int coldResistance;
-    private int fireResistance;
-    private int forceResistance;
-    private int lightningResistance;
-    private int necroticResistance;
-    private int poisonResistance;
-    private int psychicResistance;
-    private int radiantResistance;
-    private int thunderResistance;
+    protected int acidResistance;
+    protected int coldResistance;
+    protected int fireResistance;
+    protected int forceResistance;
+    protected int lightningResistance;
+    protected int necroticResistance;
+    protected int poisonResistance;
+    protected int psychicResistance;
+    protected int radiantResistance;
+    protected int thunderResistance;
 
     // Backpack
-    private int encumbrance;
-    private int goldPieces;
-    private int silverPieces;
-    private int copperPieces;
+    protected int encumbrance;
+    protected int goldPieces;
+    protected int silverPieces;
+    protected int copperPieces;
 
     public enum Race {
         DRAGONBORN, DWARF, ELADRIN, ELF,
@@ -198,8 +198,8 @@ public class PlayerCharacter {
     /*
      * Constructs a blank player character (PC)
      */
-    public PlayerCharacter() {
-        this.name = "";
+    public PlayerCharacter(String name) {
+        this.name = name;
 
         this.numLanguagesLeft = 1;
         this.languages = new Vector<Language>(this.numLanguagesLeft);
@@ -406,6 +406,7 @@ public class PlayerCharacter {
                 this.numLanguagesLeft++;
 
                 // TODO ability buffs: +2 to one ability score
+                // this.numAbilitiesLeft += 2;
 
                 // skill bonuses: training in one additional skill
                 this.numSkillTrainsLeft++;
@@ -435,307 +436,6 @@ public class PlayerCharacter {
         }
 
         this.race = r;
-    }
-
-    public void setClass(PCClass c) {
-        ArmorType[] ats;
-        WeaponType[] wts;
-        ImplementType[] its;
-
-        switch (c) {
-            case CLERIC:
-                this.powerSource = PowerSource.DIVINE;
-
-                // armor proficiencies
-                ats = new ArmorType[] {
-                    ArmorType.CLOTH, ArmorType.LEATHER,
-                    ArmorType.HIDE, ArmorType.CHAINMAIL
-                };
-                this.addArmorProficiencies(ats);
-
-                // weapon proficiencies
-                // simple melee, simple ranged
-                wts = new WeaponType[] {
-                    WeaponType.CLUB, WeaponType.DAGGER, WeaponType.JAVELIN,
-                    WeaponType.MACE, WeaponType.SICKLE, WeaponType.SPEAR,
-                    WeaponType.GREATCLUB, WeaponType.MORNINGSTAR, WeaponType.QUARTERSTAFF,
-                    WeaponType.SCYTHE, WeaponType.HANDCROSSBOW, WeaponType.SLING, WeaponType.CROSSBOW
-                };
-                this.addWeaponProficiencies(wts);
-
-                // defense buffs
-                this.will += 2;
-
-                // set hit points (at this point the PC should be level 1)
-                this.hpPerLevel = 5;
-                this.maxHealth = 12 + this.constitution + (this.level-1)*this.hpPerLevel;
-                this.numHealingSurges = 7 + this.constitutionMod;
-
-                // trained skills
-                this.religion += 5;
-                this.numSkillTrainsLeft += 3;
-
-                break;
-            case FIGHTER:
-                this.powerSource = PowerSource.MARTIAL;
-
-                // armor proficiencies
-                ats = new ArmorType[] {
-                    ArmorType.CLOTH, ArmorType.LEATHER, ArmorType.HIDE,
-                    ArmorType.CHAINMAIL, ArmorType.SCALE, 
-                    ArmorType.LIGHTSHIELD, ArmorType.HEAVYSHIELD
-                };
-                this.addArmorProficiencies(ats);
-
-                // weapon proficiencies
-                // simple melee, simple ranged, military melee, military ranged
-                wts = new WeaponType[] {
-                    WeaponType.CLUB, WeaponType.DAGGER, WeaponType.JAVELIN,
-                    WeaponType.MACE, WeaponType.SICKLE, WeaponType.SPEAR,
-                    WeaponType.GREATCLUB, WeaponType.MORNINGSTAR, WeaponType.QUARTERSTAFF,WeaponType.SCYTHE, 
-                    WeaponType.HANDCROSSBOW, WeaponType.SLING, WeaponType.CROSSBOW,
-                    WeaponType.BATTLEAXE, WeaponType.FLAIL, WeaponType.HANDAXE, WeaponType.LONGSWORD,
-                    WeaponType.SCIMITAR, WeaponType.SHORTSWORD, WeaponType.THROWINGHAMMER, WeaponType.WARHAMMER,
-                    WeaponType.WARPICK, WeaponType.FALCHION, WeaponType.GLAIVE, WeaponType.GREATAXE, 
-                    WeaponType.GREATSWORD, WeaponType.HALBERD, WeaponType.HEAVYFLAIL, WeaponType.LONGSPEAR, WeaponType.MAUL,
-                    WeaponType.LONGBOW, WeaponType.SHORTBOW
-                };
-                this.addWeaponProficiencies(wts);
-
-                // defense buffs
-                this.fortitude += 2;
-
-                // set hit points (at this point the PC should be level 1)
-                this.hpPerLevel = 6;
-                this.maxHealth = 15 + this.constitution + (this.level-1)*this.hpPerLevel;
-                this.numHealingSurges = 9 + this.constitutionMod;
-
-                // trained skills
-                this.numSkillTrainsLeft += 3;
-
-                break;
-            case PALADIN:
-                this.powerSource = PowerSource.DIVINE;
-
-                // armor proficiencies
-                ats = new ArmorType[] {
-                    ArmorType.CLOTH, ArmorType.LEATHER, ArmorType.HIDE,
-                    ArmorType.CHAINMAIL, ArmorType.SCALE, ArmorType.PLATE,
-                    ArmorType.LIGHTSHIELD, ArmorType.HEAVYSHIELD
-                };
-                this.addArmorProficiencies(ats);
-
-                // weapon proficiencies
-                // simple melee, simple ranged, military melee, military ranged
-                wts = new WeaponType[] {
-                    WeaponType.CLUB, WeaponType.DAGGER, WeaponType.JAVELIN,
-                    WeaponType.MACE, WeaponType.SICKLE, WeaponType.SPEAR,
-                    WeaponType.GREATCLUB, WeaponType.MORNINGSTAR, WeaponType.QUARTERSTAFF,WeaponType.SCYTHE, 
-                    WeaponType.HANDCROSSBOW, WeaponType.SLING, WeaponType.CROSSBOW,
-                    WeaponType.BATTLEAXE, WeaponType.FLAIL, WeaponType.HANDAXE, WeaponType.LONGSWORD,
-                    WeaponType.SCIMITAR, WeaponType.SHORTSWORD, WeaponType.THROWINGHAMMER, WeaponType.WARHAMMER,
-                    WeaponType.WARPICK, WeaponType.FALCHION, WeaponType.GLAIVE, WeaponType.GREATAXE, 
-                    WeaponType.GREATSWORD, WeaponType.HALBERD, WeaponType.HEAVYFLAIL, WeaponType.LONGSPEAR, WeaponType.MAUL
-                };
-                this.addWeaponProficiencies(wts);
-
-                // implement proficiencies
-                its = new ImplementType[] {ImplementType.HOLYSYMBOL};
-                this.addImplementProficiencies(its);
-
-                // defense buffs
-                this.fortitude++;
-                this.reflex++;
-                this.will++;
-
-                // set hit points (at this point the PC should be level 1)
-                this.hpPerLevel = 6;
-                this.maxHealth = 15 + this.constitution + (this.level-1)*this.hpPerLevel;
-                this.numHealingSurges = 10 + this.constitutionMod;
-
-                // trained skills
-                this.numSkillTrainsLeft += 3;
-
-                break;
-            case RANGER:
-                this.powerSource = PowerSource.MARTIAL;
-
-                // armor proficiencies
-                ats = new ArmorType[] {
-                    ArmorType.CLOTH, ArmorType.LEATHER, ArmorType.HIDE,
-                };
-                this.addArmorProficiencies(ats);
-
-                // weapon proficiencies
-                // simple melee, simple ranged, military melee, military ranged
-                wts = new WeaponType[] {
-                    WeaponType.CLUB, WeaponType.DAGGER, WeaponType.JAVELIN,
-                    WeaponType.MACE, WeaponType.SICKLE, WeaponType.SPEAR,
-                    WeaponType.GREATCLUB, WeaponType.MORNINGSTAR, WeaponType.QUARTERSTAFF,WeaponType.SCYTHE, 
-                    WeaponType.HANDCROSSBOW, WeaponType.SLING, WeaponType.CROSSBOW,
-                    WeaponType.BATTLEAXE, WeaponType.FLAIL, WeaponType.HANDAXE, WeaponType.LONGSWORD,
-                    WeaponType.SCIMITAR, WeaponType.SHORTSWORD, WeaponType.THROWINGHAMMER, WeaponType.WARHAMMER,
-                    WeaponType.WARPICK, WeaponType.FALCHION, WeaponType.GLAIVE, WeaponType.GREATAXE, 
-                    WeaponType.GREATSWORD, WeaponType.HALBERD, WeaponType.HEAVYFLAIL, WeaponType.LONGSPEAR, WeaponType.MAUL,
-                    WeaponType.LONGBOW, WeaponType.SHORTBOW    
-                };
-                this.addWeaponProficiencies(wts);
-
-                // defense buffs
-                this.fortitude++;
-                this.reflex++;
-
-                // set hit points (at this point the PC should be level 1)
-                this.hpPerLevel = 5;
-                this.maxHealth = 12 + this.constitution + (this.level-1)*this.hpPerLevel;
-                this.numHealingSurges = 6 + this.constitutionMod;
-
-                // trained skills
-                this.numSkillTrainsLeft += 5;
-
-                break;
-            case ROGUE:
-                this.powerSource = PowerSource.MARTIAL;
-
-                // armor proficiencies
-                ats = new ArmorType[] {
-                    ArmorType.CLOTH, ArmorType.LEATHER
-                };
-                this.addArmorProficiencies(ats);
-
-                // weapon proficiencies
-                // simple melee, simple ranged, military melee, military ranged
-                wts = new WeaponType[] {
-                    WeaponType.DAGGER, WeaponType.HANDCROSSBOW, WeaponType.SHURIKEN, 
-                    WeaponType.SLING, WeaponType.SHORTSWORD
-                };
-                this.addWeaponProficiencies(wts);
-
-                // defense buffs
-                this.reflex += 2;
-
-                // set hit points (at this point the PC should be level 1)
-                this.hpPerLevel = 5;
-                this.maxHealth = 12 + this.constitution + (this.level-1)*this.hpPerLevel;
-                this.numHealingSurges = 6 + this.constitutionMod;
-
-                // trained skills
-                this.stealth += 5;
-                this.thievery += 5;
-                this.numSkillTrainsLeft += 4;
-
-                break;
-            case WARLOCK:
-                this.powerSource = PowerSource.ARCANE;
-
-                // armor proficiencies
-                ats = new ArmorType[] {
-                    ArmorType.CLOTH, ArmorType.LEATHER
-                };
-                this.addArmorProficiencies(ats);
-
-                // weapon proficiencies
-                // simple melee, simple ranged, military melee, military ranged
-                wts = new WeaponType[] {
-                    WeaponType.CLUB, WeaponType.DAGGER, WeaponType.JAVELIN,
-                    WeaponType.MACE, WeaponType.SICKLE, WeaponType.SPEAR,
-                    WeaponType.GREATCLUB, WeaponType.MORNINGSTAR, WeaponType.QUARTERSTAFF,
-                    WeaponType.SCYTHE, WeaponType.HANDCROSSBOW, WeaponType.SLING, WeaponType.CROSSBOW
-                };
-                this.addWeaponProficiencies(wts);
-
-                // implement proficiencies
-                its = new ImplementType[] {
-                    ImplementType.ROD, ImplementType.WAND
-                };
-                this.addImplementProficiencies(its);
-
-                // defense buffs
-                this.will++;
-                this.reflex++;
-
-                // set hit points (at this point the PC should be level 1)
-                this.hpPerLevel = 5;
-                this.maxHealth = 12 + this.constitution + (this.level-1)*this.hpPerLevel;
-                this.numHealingSurges = 6 + this.constitutionMod;
-
-                // trained skills
-                this.numSkillTrainsLeft += 4;
-
-                break;
-            case WARLORD:
-                this.powerSource = PowerSource.MARTIAL;
-
-                // armor proficiencies
-                ats = new ArmorType[] {
-                    ArmorType.CLOTH, ArmorType.LEATHER, ArmorType.HIDE,
-                    ArmorType.CHAINMAIL, ArmorType.LIGHTSHIELD
-                };
-                this.addArmorProficiencies(ats);
-
-                // weapon proficiencies
-                // simple melee, simple ranged, military melee, military ranged
-                wts = new WeaponType[] {
-                    WeaponType.CLUB, WeaponType.DAGGER, WeaponType.JAVELIN,
-                    WeaponType.MACE, WeaponType.SICKLE, WeaponType.SPEAR,
-                    WeaponType.GREATCLUB, WeaponType.MORNINGSTAR, WeaponType.QUARTERSTAFF,WeaponType.SCYTHE, 
-                    WeaponType.HANDCROSSBOW, WeaponType.SLING, WeaponType.CROSSBOW,
-                    WeaponType.BATTLEAXE, WeaponType.FLAIL, WeaponType.HANDAXE, WeaponType.LONGSWORD,
-                    WeaponType.SCIMITAR, WeaponType.SHORTSWORD, WeaponType.THROWINGHAMMER, WeaponType.WARHAMMER,
-                    WeaponType.WARPICK, WeaponType.FALCHION, WeaponType.GLAIVE, WeaponType.GREATAXE, 
-                    WeaponType.GREATSWORD, WeaponType.HALBERD, WeaponType.HEAVYFLAIL, WeaponType.LONGSPEAR, WeaponType.MAUL
-                };
-                this.addWeaponProficiencies(wts);
-
-                // defense buffs
-                this.fortitude++;
-                this.will++;
-
-                // set hit points (at this point the PC should be level 1)
-                this.hpPerLevel = 5;
-                this.maxHealth = 12 + this.constitution + (this.level-1)*this.hpPerLevel;
-                this.numHealingSurges = 7 + this.constitutionMod;
-
-                // trained skills
-                this.numSkillTrainsLeft += 4;
-
-                break;
-            case WIZARD:
-                this.powerSource = PowerSource.ARCANE;
-
-                // armor proficiencies
-                ats = new ArmorType[] {ArmorType.CLOTH};
-                this.addArmorProficiencies(ats);
-
-                // weapon proficiencies
-                // simple melee, simple ranged, military melee, military ranged
-                wts = new WeaponType[] {
-                    WeaponType.DAGGER, WeaponType.QUARTERSTAFF,
-                };
-                this.addWeaponProficiencies(wts);
-
-                // implement proficiencies
-                its = new ImplementType[] {
-                    ImplementType.ORB, ImplementType.STAFF, ImplementType.WAND
-                };
-                this.addImplementProficiencies(its);
-
-                // defense buffs
-                this.will += 2;
-
-                // set hit points (at this point the PC should be level 1)
-                this.hpPerLevel = 4;
-                this.maxHealth = 10 + this.constitution + (this.level-1)*this.hpPerLevel;
-                this.numHealingSurges = 6 + this.constitutionMod;
-
-                // trained skills
-                this.arcana += 5;
-                this.numSkillTrainsLeft += 3;
-
-                break;
-        }
-
-        this.pcClass = c;
     }
 
     public void setStrength(int s) {
@@ -813,7 +513,7 @@ public class PlayerCharacter {
     /*
      * Helper function that calculates the cost of raising an ability score
      */
-    private static int calcScoreCost(int score) {
+    protected static int calcScoreCost(int score) {
         int cost = Integer.MAX_VALUE;
         if (score >= 8 && score < 14) {
             cost = score - 8;
@@ -840,7 +540,7 @@ public class PlayerCharacter {
     /*
      * Helper function that calculates a maximum ability score within cost
      */
-    private int calcMaxAbilityScore() {
+    protected int calcMaxAbilityScore() {
         int maxAbilityScore = 8;
         int cost = 0;
         /*
@@ -983,7 +683,7 @@ public class PlayerCharacter {
     @Override
     public String toString() {
         String charStr = this.name + "\n---------------\n";
-        charStr += this.race + " " + this.pcClass + '\n';
+        charStr += this.race + " " + this.getClass().getSimpleName() + '\n';
         charStr += "Strength: " + this.strength + '\n';
         charStr += "Constitution: " + this.constitution + '\n';
         charStr += "Dexterity: " + this.dexterity + '\n';

@@ -7,27 +7,55 @@ import org.junit.runners.JUnit4;
 
 import beholder.PlayerCharacter;
 import beholder.PlayerCharacter.*;
+import beholder.Cleric;
+import beholder.Fighter;
+import beholder.Paladin;
+import beholder.Ranger;
+import beholder.Rogue;
+import beholder.Warlock;
+import beholder.Warlord;
+import beholder.Wizard;
 
 @RunWith(JUnit4.class)
 public class PlayerCharacterTest {
 
     @Test
-    public void testConstructors() {
-        // instantiate blank character
-        PlayerCharacter pc = new PlayerCharacter();
-        pc.setName("Burt Ward");
-        pc.setRace(Race.HALFLING);
-        pc.setClass(PCClass.ROGUE);
+    public void testCleric() {
+        Cleric c = new Cleric("My Cleric");
+    }
 
-        pc.setStrength(16);
-        pc.setConstitution(10);
-        pc.setDexterity(15);
-        pc.setIntelligence(11);
-        pc.setWisdom(10);
-        pc.setCharisma(13);
-        
-        // pc.rollAbilityScores();
+    @Test
+    public void testFighter() {
+        Fighter f = new Fighter("My Fighter");
+    }
 
-        System.out.println(pc);
+    @Test
+    public void testPaladin() {
+        Paladin p = new Paladin("My Paladin");
+    }
+
+    @Test
+    public void testRanger() {
+        Ranger r = new Ranger("My Ranger");
+    }
+
+    @Test
+    public void testRogue() {
+        Rogue r = new Rogue("My Rogue");
+    }
+
+    @Test
+    public void testWarlock() {
+        Warlock w = new Warlock("My Warlock");
+    }
+
+    @Test
+    public void testWarlord() {
+        Warlord w = new Warlord("My Warlord");
+    }
+
+    @Test
+    public void testWizard() {
+        Wizard w = new Wizard("My Wizard");
     }
 }
