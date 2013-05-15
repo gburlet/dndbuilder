@@ -24,6 +24,9 @@ package beholder;
  */
 
 import java.util.Vector;
+import java.util.Arrays;
+import java.lang.Integer;
+import beholder.Die;
 
 /*
  * This class represents a player character (PC)
@@ -123,21 +126,21 @@ public class PlayerCharacter {
     private int silverPieces;
     private int copperPieces;
 
-    private enum Race {
+    public enum Race {
         DRAGONBORN, DWARF, ELADRIN, ELF,
         HALFELF, HALFLING, HUMAN, TIEFLING
     }
 
-    private enum PCClass {
+    public enum PCClass {
         CLERIC, FIGHTER, PALADIN, RANGER, 
         ROGUE, WARLOCK, WARLORD, WIZARD
     }
 
-    private enum PowerSource {
+    public enum PowerSource {
         ARCANE, DIVINE, MARTIAL, OTHER
     }
 
-    private enum Skill {
+    public enum Skill {
         ACROBATICS, ARCANA, ATHLETICS, BLUFF,
         DIPLOMACY, DUNGEONEERING, ENDURANCE,
         HEAL, HISTORY, INSIGHT, INTIMIDATE,
@@ -145,30 +148,30 @@ public class PlayerCharacter {
         STREETWISE, THIEVERY
     }
 
-    private enum Vision {
+    public enum Vision {
         NORMAL, LOWLIGHT
     }
 
-    private enum Language {
+    public enum Language {
         COMMON, ARGON, DRACONIC, DWARVEN, ELVEN,
         DEEPSPEECH, GIANT, GOBLIN, PRIMORDIAL,
         QUORI, RIEDRAN
     }
 
-    private enum Size {
+    public enum Size {
         SMALL, MEDIUM, LARGE
     }
 
     /*
      * Weapon groups defined on pp. 216
      */
-    private enum WeaponGroup {
+    public enum WeaponGroup {
         AXE, BOW, CROSSBOW, FLAIL, HAMMER, 
         HEAVYBLADE, LIGHTBLADE, MACE, PICK,
         POLEARM, SLING, SPEAR, STAFF, UNARMED
     }
 
-    private enum WeaponType {
+    public enum WeaponType {
         UNARMED, CLUB, DAGGER, JAVELIN, MACE, SICKLE,
         SPEAR, GREATCLUB, MORNINGSTAR, QUARTERSTAFF, 
         SCYTHE, BATTLEAXE, FLAIL, HANDAXE, LONGSWORD,
@@ -179,15 +182,15 @@ public class PlayerCharacter {
         CROSSBOW, LONGBOW, SHORTBOW, SHURIKEN
     }
 
-    private enum ImplementType {
+    public enum ImplementType {
         ORB, STAFF, WAND, ROD, HOLYSYMBOL
     }
 
-    private enum ArmorGroup {
+    public enum ArmorGroup {
         LIGHT, HEAVY
     }
 
-    private enum ArmorType {
+    public enum ArmorType {
         CLOTH, LEATHER, HIDE, CHAINMAIL, SCALE, PLATE,
         LIGHTSHIELD, HEAVYSHIELD
     }
@@ -199,10 +202,17 @@ public class PlayerCharacter {
         this.name = "";
 
         this.numLanguagesLeft = 1;
+        this.languages = new Vector<Language>(this.numLanguagesLeft);
         this.addLanguage(Language.COMMON);
+
+        this.weaponProficiencies = new Vector<WeaponType>();
+        this.implementProficiencies = new Vector<ImplementType>();
+        this.armorProficiencies = new Vector<ArmorType>();
 
         // become level one
         this.levelUp();
+
+        this.numAbilitiesLeft = 32;
 
         // starting gold
         this.goldPieces = 100;
@@ -395,8 +405,7 @@ public class PlayerCharacter {
                 this.vision = Vision.NORMAL;
                 this.numLanguagesLeft++;
 
-                // ability buffs: +2 to one ability score
-                this.numAbilitiesLeft += 2;
+                // TODO ability buffs: +2 to one ability score
 
                 // skill bonuses: training in one additional skill
                 this.numSkillTrainsLeft++;
@@ -424,6 +433,8 @@ public class PlayerCharacter {
                 this.fireResistance += 5;
                 break;
         }
+
+        this.race = r;
     }
 
     public void setClass(PCClass c) {
@@ -727,6 +738,145 @@ public class PlayerCharacter {
         this.pcClass = c;
     }
 
+    public void setStrength(int s) {
+        int cost = this.calcScoreCost(s);
+        if (cost > this.numAbilitiesLeft) {
+            // calculate max ability score possible
+            s = this.calcMaxAbilityScore();
+            cost = this.calcScoreCost(s);
+        }
+
+        this.numAbilitiesLeft -= cost;
+        this.strength = s;
+    }
+
+    public void setConstitution(int c) {
+        int cost = this.calcScoreCost(c);
+        if (cost > this.numAbilitiesLeft) {
+            // calculate max ability score possible
+            c = this.calcMaxAbilityScore();
+            cost = this.calcScoreCost(c);
+        }
+
+        this.numAbilitiesLeft -= cost;
+        this.constitution = c;
+    }
+
+    public void setDexterity(int d) {
+        int cost = this.calcScoreCost(d);
+        if (cost > this.numAbilitiesLeft) {
+            // calculate max ability score possible
+            d = this.calcMaxAbilityScore();
+            cost = this.calcScoreCost(d);
+        }
+
+        this.numAbilitiesLeft -= cost;
+        this.dexterity = d;
+    }
+
+    public void setIntelligence(int i) {
+        int cost = this.calcScoreCost(i);
+        if (cost > this.numAbilitiesLeft) {
+            // calculate max ability score possible
+            i = this.calcMaxAbilityScore();
+            cost = this.calcScoreCost(i);
+        }
+
+        this.numAbilitiesLeft -= cost;
+        this.intelligence = i;
+    }
+
+    public void setWisdom(int w) {
+        int cost = this.calcScoreCost(w);
+        if (cost > this.numAbilitiesLeft) {
+            // calculate max ability score possible
+            w = this.calcMaxAbilityScore();
+            cost = this.calcScoreCost(w);
+        }
+
+        this.numAbilitiesLeft -= cost;
+        this.wisdom = w;
+    }
+
+    public void setCharisma(int c) {
+        int cost = this.calcScoreCost(c);
+        if (cost > this.numAbilitiesLeft) {
+            // calculate max ability score possible
+            c = this.calcMaxAbilityScore();
+            cost = this.calcScoreCost(c);
+        }
+
+        this.numAbilitiesLeft -= cost;
+        this.charisma = c;
+    }
+
+    /*
+     * Helper function that calculates the cost of raising an ability score
+     */
+    private static int calcScoreCost(int score) {
+        int cost = Integer.MAX_VALUE;
+        if (score >= 8 && score < 14) {
+            cost = score - 8;
+        }
+        else if (score >= 14 && score < 17) {
+            cost = 5 + (score-13)*2;
+        }
+        else if (score == 17) {
+            cost = 14;
+        }
+        else if (score == 18) {
+            cost = 18;
+        }
+        /*
+        else if (score > 18) {
+            // assign cost using the exponential regression line
+            cost = (int)Math.exp(0.2602*(score-6.829));
+        }
+        */
+
+        return cost;
+    }
+
+    /*
+     * Helper function that calculates a maximum ability score within cost
+     */
+    private int calcMaxAbilityScore() {
+        int maxAbilityScore = 8;
+        int cost = 0;
+        /*
+         * Incrementally raise ability score until it violates the number of
+         * points left to spend or reaches the max ability score for level one.
+         */
+        while (cost <= this.numAbilitiesLeft && maxAbilityScore <= 18) {
+            maxAbilityScore++;
+            cost = this.calcScoreCost(maxAbilityScore);
+        }
+
+        // at this point cost > number of points left to spend, go back one iteration
+        return --maxAbilityScore;
+    }
+
+    public void rollAbilityScores() {
+        // pick up 6-sided die
+        Die d6 = new Die(6);
+
+        int[] abilityScores = new int[6];
+        for (int i = 0; i < 6; i++) {
+            // roll 4d6
+            int[] rolls = d6.roll(4);
+            Arrays.sort(rolls);
+            // sum highest three rolls
+            abilityScores[i] = rolls[3] + rolls[2] + rolls[1];
+        }
+
+        this.strength = abilityScores[0];
+        this.constitution = abilityScores[1];
+        this.dexterity = abilityScores[2];
+        this.intelligence = abilityScores[3];
+        this.wisdom = abilityScores[4];
+        this.charisma = abilityScores[5];
+    }
+
     public void levelUp() {
         if (this.level < 30) {
             this.level++;
@@ -825,5 +975,22 @@ public class PlayerCharacter {
                 this.fireResistance++;
             }
         }
+    }
+
+    /*
+     * Overload toString method to print character information
+     */
+    @Override
+    public String toString() {
+        String charStr = this.name + "\n---------------\n";
+        charStr += this.race + " " + this.pcClass + '\n';
+        charStr += "Strength: " + this.strength + '\n';
+        charStr += "Constitution: " + this.constitution + '\n';
+        charStr += "Dexterity: " + this.dexterity + '\n';
+        charStr += "Intelligence: " + this.intelligence + '\n';
+        charStr += "Wisdom: " + this.wisdom + '\n';
+        charStr += "Charisma: " + this.charisma + '\n';
+
+        return charStr;
     }
 }

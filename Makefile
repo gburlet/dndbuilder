@@ -1,7 +1,7 @@
 CC=javac
 CLASSPATH=/usr/share/java/junit.jar
 PACKAGE=beholder
-SRC=src/$(PACKAGE)/PlayerCharacter.java
+SRC=src/$(PACKAGE)/{PlayerCharacter.java,Die.java}
 TEST_SRC=test/src/$(PACKAGE)/PlayerCharacterTest.java
 BUILD_PATH=bin
 TEST_BUILD_PATH=test/bin
