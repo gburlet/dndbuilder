@@ -60,18 +60,12 @@ public class PlayerCharacter {
     protected Vector<ArmorType> armorProficiencies;
     
     // Ability Scores
-    protected int strength;
-    protected int strengthMod;
-    protected int constitution;
-    protected int constitutionMod;
-    protected int dexterity;
-    protected int dexterityMod;
-    protected int intelligence;
-    protected int intelligenceMod;
-    protected int wisdom;
-    protected int wisdomMod;
-    protected int charisma;
-    protected int charismaMod;
+    protected int strength, passiveStrength, strengthMod;
+    protected int constitution, passiveConstitution, constitutionMod;
+    protected int dexterity, passiveDexterity, dexterityMod;
+    protected int intelligence, passiveIntelligence, intelligenceMod;
+    protected int wisdom, passiveWisdom, wisdomMod;
+    protected int charisma, passiveCharisma, charismaMod;
 
     // Skill Values
     protected int acrobatics;
@@ -299,8 +293,8 @@ public class PlayerCharacter {
                 this.addLanguage(Language.DRACONIC);
 
                 // ability buffs
-                this.strength += 2;
-                this.charisma += 2;
+                this.passiveStrength = 2;
+                this.passiveCharisma = 2;
 
                 // skill bonuses
                 this.history += 2;
@@ -314,8 +308,8 @@ public class PlayerCharacter {
                 this.addLanguage(Language.DWARVEN);
 
                 // ability buffs
-                this.constitution += 2;
-                this.wisdom += 2;
+                this.passiveConstitution = 2;
+                this.passiveWisdom = 2;
 
                 // skill bonuses
                 this.dungeoneering += 2;
@@ -329,8 +323,8 @@ public class PlayerCharacter {
                 this.addLanguage(Language.ELVEN);
 
                 // ability buffs
-                this.dexterity += 2;
-                this.intelligence += 2;
+                this.passiveDexterity = 2;
+                this.passiveIntelligence = 2;
 
                 // skill bonuses
                 this.arcana += 2;
@@ -353,8 +347,8 @@ public class PlayerCharacter {
                 this.addLanguage(Language.ELVEN);
 
                 // ability buffs
-                this.dexterity += 2;
-                this.wisdom += 2;
+                this.passiveDexterity = 2;
+                this.passiveWisdom = 2;
 
                 // skill bonuses
                 this.nature += 2;
@@ -373,8 +367,8 @@ public class PlayerCharacter {
                 this.numLanguagesLeft++;
 
                 // ability buffs
-                this.constitution += 2;
-                this.charisma += 2;
+                this.passiveConstitution = 2;
+                this.passiveCharisma = 2;
 
                 // skill bonuses
                 this.diplomacy += 2;
@@ -391,8 +385,8 @@ public class PlayerCharacter {
                 this.numLanguagesLeft++;
 
                 // ability buffs
-                this.dexterity += 2;
-                this.charisma += 2;
+                this.passiveDexterity = 2;
+                this.passiveCharisma = 2;
 
                 // skill bonuses
                 this.acrobatics += 2;
@@ -406,7 +400,6 @@ public class PlayerCharacter {
                 this.numLanguagesLeft++;
 
                 // TODO ability buffs: +2 to one ability score
-                // this.numAbilitiesLeft += 2;
 
                 // skill bonuses: training in one additional skill
                 this.numSkillTrainsLeft++;
@@ -424,8 +417,8 @@ public class PlayerCharacter {
                 this.numLanguagesLeft++;
 
                 // ability buffs
-                this.intelligence += 2;
-                this.charisma += 2;
+                this.passiveIntelligence = 2;
+                this.passiveCharisma = 2;
 
                 // skill bonuses
                 this.bluff += 2;
@@ -447,7 +440,8 @@ public class PlayerCharacter {
         }
 
         this.numAbilitiesLeft -= cost;
-        this.strength = s;
+        this.strength = s + this.passiveStrength;
+        this.strengthMod = this.calcAbilityModifier(this.strength);
     }
 
     public void setConstitution(int c) {
@@ -459,7 +453,8 @@ public class PlayerCharacter {
         }
 
         this.numAbilitiesLeft -= cost;
-        this.constitution = c;
+        this.constitution = c + this.passiveConstitution;
+        this.constitutionMod = this.calcAbilityModifier(this.constitution);
     }
 
     public void setDexterity(int d) {
@@ -471,7 +466,8 @@ public class PlayerCharacter {
         }
 
         this.numAbilitiesLeft -= cost;
-        this.dexterity = d;
+        this.dexterity = d + this.passiveDexterity;
+        this.dexterityMod = this.calcAbilityModifier(this.dexterity);
     }
 
     public void setIntelligence(int i) {
@@ -483,7 +479,8 @@ public class PlayerCharacter {
         }
 
         this.numAbilitiesLeft -= cost;
-        this.intelligence = i;
+        this.intelligence = i + this.passiveIntelligence;
+        this.intelligenceMod = this.calcAbilityModifier(this.intelligence);
     }
 
     public void setWisdom(int w) {
@@ -495,7 +492,8 @@ public class PlayerCharacter {
         }
 
         this.numAbilitiesLeft -= cost;
-        this.wisdom = w;
+        this.wisdom = w + this.passiveWisdom;
+        this.wisdomMod = this.calcAbilityModifier(this.wisdom);
     }
 
     public void setCharisma(int c) {
@@ -507,13 +505,21 @@ public class PlayerCharacter {
         }
 
         this.numAbilitiesLeft -= cost;
-        this.charisma = c;
+        this.charisma = c + this.passiveCharisma;
+        this.charismaMod = this.calcAbilityModifier(this.charisma);
+    }
+
+    /*
+     * Helper function to calculate an ability's modifier
+     */
+    private int calcAbilityModifier(int ability) {
+        return (int)(ability-10)/2;
     }
 
     /*
      * Helper function that calculates the cost of raising an ability score
      */
-    protected static int calcScoreCost(int score) {
+    private static int calcScoreCost(int score) {
         int cost = Integer.MAX_VALUE;
         if (score >= 8 && score < 14) {
             cost = score - 8;
@@ -540,7 +546,7 @@ public class PlayerCharacter {
     /*
      * Helper function that calculates a maximum ability score within cost
      */
-    protected int calcMaxAbilityScore() {
+    private int calcMaxAbilityScore() {
         int maxAbilityScore = 8;
         int cost = 0;
         /*
@@ -683,13 +689,13 @@ public class PlayerCharacter {
     @Override
     public String toString() {
         String charStr = this.name + "\n---------------\n";
-        charStr += this.race + " " + this.getClass().getSimpleName() + '\n';
-        charStr += "Strength: " + this.strength + '\n';
-        charStr += "Constitution: " + this.constitution + '\n';
-        charStr += "Dexterity: " + this.dexterity + '\n';
-        charStr += "Intelligence: " + this.intelligence + '\n';
-        charStr += "Wisdom: " + this.wisdom + '\n';
-        charStr += "Charisma: " + this.charisma + '\n';
+        charStr += this.race + " " + this.getClass().getSimpleName() + "\n\n";
+        charStr += "Strength: " + this.strength + " (" + this.strengthMod + ")\n";
+        charStr += "Constitution: " + this.constitution + " (" + this.constitutionMod + ")\n";
+        charStr += "Dexterity: " + this.dexterity + " (" + this.dexterityMod + ")\n";
+        charStr += "Intelligence: " + this.intelligence + " (" + this.intelligenceMod + ")\n";
+        charStr += "Wisdom: " + this.wisdom + " (" + this.wisdomMod + ")\n";
+        charStr += "Charisma: " + this.charisma + " (" + this.charismaMod + ")\n";
 
         return charStr;
     }

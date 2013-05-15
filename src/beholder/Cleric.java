@@ -26,6 +26,7 @@ public class Cleric extends PlayerCharacter {
         };
         this.addWeaponProficiencies(wts);
 
+        /*
         // defense buffs
         this.will += 2;
 
@@ -37,5 +38,6 @@ public class Cleric extends PlayerCharacter {
         // trained skills
         this.religion += 5;
         this.numSkillTrainsLeft += 3;
+        */
     }
 }

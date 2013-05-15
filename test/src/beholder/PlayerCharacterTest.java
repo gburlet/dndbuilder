@@ -42,6 +42,17 @@ public class PlayerCharacterTest {
     @Test
     public void testRogue() {
         Rogue r = new Rogue("My Rogue");
+
+        r.setRace(Race.HALFLING);
+
+        r.setStrength(16);
+        r.setConstitution(12);
+        r.setDexterity(16);
+        r.setIntelligence(10);
+        r.setWisdom(10);
+        r.setCharisma(10);
+
+        System.out.println(r);
     }
 
     @Test

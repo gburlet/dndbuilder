@@ -32,6 +32,7 @@ public class Fighter extends PlayerCharacter {
         };
         this.addWeaponProficiencies(wts);
 
+        /*
         // defense buffs
         this.fortitude += 2;
 
@@ -42,6 +43,6 @@ public class Fighter extends PlayerCharacter {
 
         // trained skills
         this.numSkillTrainsLeft += 3;
-
+        */
     }
 }

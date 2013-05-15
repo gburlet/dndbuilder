@@ -26,6 +26,7 @@ public class Wizard extends PlayerCharacter {
         };
         this.addImplementProficiencies(its);
 
+        /*
         // defense buffs
         this.will += 2;
 
@@ -37,5 +38,6 @@ public class Wizard extends PlayerCharacter {
         // trained skills
         this.arcana += 5;
         this.numSkillTrainsLeft += 3;
+        */
     }
 }

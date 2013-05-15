@@ -30,6 +30,7 @@ public class Ranger extends PlayerCharacter {
         };
         this.addWeaponProficiencies(wts);
 
+        /*
         // defense buffs
         this.fortitude++;
         this.reflex++;
@@ -41,5 +42,6 @@ public class Ranger extends PlayerCharacter {
 
         // trained skills
         this.numSkillTrainsLeft += 5;
+        */
     }
 }

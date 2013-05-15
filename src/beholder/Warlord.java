@@ -30,6 +30,7 @@ public class Warlord extends PlayerCharacter {
         };
         this.addWeaponProficiencies(wts);
 
+        /*
         // defense buffs
         this.fortitude++;
         this.will++;
@@ -41,5 +42,6 @@ public class Warlord extends PlayerCharacter {
 
         // trained skills
         this.numSkillTrainsLeft += 4;
+        */
     }
 }
