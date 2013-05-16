@@ -22,14 +22,17 @@ class DataParser:
         cur = self._con.cursor()
 
         # create database table
-        sql = "DROP TABLE Feats"
-        cur.execute(sql)
+        try:
+            cur.execute("DROP TABLE Feats")
+        except sqlite.OperationalError:
+            pass
+
         sql = "CREATE TABLE Feats(Name TEXT, Type TEXT, Prerequisites TEXT, Benefit TEXT, Source TEXT)"
         cur.execute(sql)
 
         with open(feats_path, 'rU') as ff:
-            featline = csv.reader(ff, dialect=csv.excel)
-            for i, f in enumerate(featline):
+            featlines = csv.reader(ff, dialect=csv.excel)
+            for i, f in enumerate(featlines):
                 # skip header
                 if i == 0:
                     continue
@@ -45,14 +48,36 @@ class DataParser:
         self._con.commit()
 
     def populate_powers(self, powers_path):
-        powers = []
+        cur = self._con.cursor()
 
-        return powers
+        # create database table
+        try:
+            cur.execute("DROP TABLE Powers")
+        except sqlite.OperationalError:
+            pass
+        sql = "CREATE TABLE Powers(Name TEXT, Type TEXT, Class TEXT, Level INT)"
+        cur.execute(sql)
+
+        with open(powers_path, 'rU') as pf:
+            powerlines = csv.reader(pf, dialect=csv.excel)
+            for i, p in enumerate(powerlines):
+                # skip header
+                if i == 0:
+                    continue
+
+                # power name: 0
+                # power type: 1
+                # class: 2
+                # required level: 3
+                sql = "INSERT INTO Powers VALUES(?, ?, ?, ?)"
+                cur.execute(sql, (p[0], p[1], p[2], int(p[3])))
+
+        self._con.commit()
 
 if __name__ == '__main__':
     db_path = '/Users/gburlet/Projects/dndbuilder/data/beholder.db'
     feats_path = '/Users/gburlet/Projects/dndbuilder/data/feats.csv'
-    powers_path = ''
+    powers_path = '/Users/gburlet/Projects/dndbuilder/data/powers.csv'
 
     dp = DataParser(db_path, feats_path, powers_path)
     dp.populate_feats(feats_path)
