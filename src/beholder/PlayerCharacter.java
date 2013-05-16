@@ -68,23 +68,7 @@ public class PlayerCharacter {
     protected int charisma, passiveCharisma, charismaMod;
 
     // Skill Values
-    protected int acrobatics;
-    protected int arcana;
-    protected int athletics;
-    protected int bluff;
-    protected int diplomacy;
-    protected int dungeoneering;
-    protected int endurance;
-    protected int heal;
-    protected int history;
-    protected int insight;
-    protected int intimidate;
-    protected int nature;
-    protected int perception;
-    protected int religion;
-    protected int stealth;
-    protected int streetwise;
-    protected int thievery;
+    protected int[] skills;
 
     // PC maitenance
     protected int numSkillTrainsLeft;
@@ -135,11 +119,21 @@ public class PlayerCharacter {
     }
 
     public enum Skill {
-        ACROBATICS, ARCANA, ATHLETICS, BLUFF,
-        DIPLOMACY, DUNGEONEERING, ENDURANCE,
-        HEAL, HISTORY, INSIGHT, INTIMIDATE,
-        NATURE, PERCEPTION, RELIGION, STEALTH,
-        STREETWISE, THIEVERY
+        ACROBATICS(0), ARCANA(1), ATHLETICS(2), BLUFF(3),
+        DIPLOMACY(4), DUNGEONEERING(5), ENDURANCE(6),
+        HEAL(7), HISTORY(8), INSIGHT(9), INTIMIDATE(10),
+        NATURE(11), PERCEPTION(12), RELIGION(13), STEALTH(14),
+        STREETWISE(15), THIEVERY(16);
+
+        private int index;
+
+        private Skill(int index) {
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return this.index;
+        }
     }
 
     public enum Vision {
@@ -202,6 +196,7 @@ public class PlayerCharacter {
         this.weaponProficiencies = new Vector<WeaponType>();
         this.implementProficiencies = new Vector<ImplementType>();
         this.armorProficiencies = new Vector<ArmorType>();
+        this.skills = new int[17];
 
         // become level one
         this.levelUp();
@@ -297,8 +292,8 @@ public class PlayerCharacter {
                 this.passiveCharisma = this.charisma = 2;
 
                 // skill bonuses
-                this.history += 2;
-                this.intimidate += 2;
+                this.skills[Skill.HISTORY.getIndex()] += 2;
+                this.skills[Skill.INTIMIDATE.getIndex()] += 2;
 
                 break;
             case DWARF:
@@ -312,8 +307,8 @@ public class PlayerCharacter {
                 this.passiveWisdom = this.wisdom = 2;
 
                 // skill bonuses
-                this.dungeoneering += 2;
-                this.endurance += 2;
+                this.skills[Skill.DUNGEONEERING.getIndex()] += 2;
+                this.skills[Skill.ENDURANCE.getIndex()] += 2;
 
                 break;
             case ELADRIN:
@@ -327,8 +322,8 @@ public class PlayerCharacter {
                 this.passiveIntelligence = this.intelligence = 2;
 
                 // skill bonuses
-                this.arcana += 2;
-                this.history += 2;
+                this.skills[Skill.ARCANA.getIndex()] += 2;
+                this.skills[Skill.HISTORY.getIndex()] += 2;
 
                 // weapon proficiencies
                 this.addWeaponProficiencies(new WeaponType[] {WeaponType.LONGSWORD});
@@ -351,8 +346,8 @@ public class PlayerCharacter {
                 this.passiveWisdom = this.wisdom = 2;
 
                 // skill bonuses
-                this.nature += 2;
-                this.perception += 2;
+                this.skills[Skill.NATURE.getIndex()] += 2;
+                this.skills[Skill.PERCEPTION.getIndex()] += 2;
 
                 // weapon proficiencies
                 WeaponType[] wts = {WeaponType.LONGBOW, WeaponType.SHORTBOW};
@@ -371,8 +366,8 @@ public class PlayerCharacter {
                 this.passiveCharisma = this.charisma =2;
 
                 // skill bonuses
-                this.diplomacy += 2;
-                this.insight += 2;
+                this.skills[Skill.DIPLOMACY.getIndex()] += 2;
+                this.skills[Skill.INSIGHT.getIndex()] += 2;
 
                 // extra encounter power that is an at-will power from another class
                 this.numEncounterPowersLeft++;
@@ -389,8 +384,8 @@ public class PlayerCharacter {
                 this.passiveCharisma = this.charisma = 2;
 
                 // skill bonuses
-                this.acrobatics += 2;
-                this.thievery += 2;
+                this.skills[Skill.ACROBATICS.getIndex()] += 2;
+                this.skills[Skill.THIEVERY.getIndex()] += 2;
 
                 break;
             case HUMAN:
@@ -421,8 +416,8 @@ public class PlayerCharacter {
                 this.passiveCharisma = this.charisma = 2;
 
                 // skill bonuses
-                this.bluff += 2;
-                this.stealth += 2;
+                this.skills[Skill.BLUFF.getIndex()] += 2;
+                this.skills[Skill.STEALTH.getIndex()] += 2;
 
                 this.fireResistance += 5;
                 break;
@@ -618,6 +613,13 @@ public class PlayerCharacter {
         this.charisma = abilityScores[5];
     }
 
+    public void trainSkill(Skill s) {
+        if (this.numSkillTrainsLeft > 0) {
+            this.skills[s.getIndex()] += 5;
+            this.numSkillTrainsLeft--;
+        }
+    }
+
     public void levelUp() {
         if (this.level < 30) {
             this.level++;
@@ -731,6 +733,31 @@ public class PlayerCharacter {
         charStr += "Intelligence: " + this.intelligence + " (" + this.intelligenceMod + ")\n";
         charStr += "Wisdom: " + this.wisdom + " (" + this.wisdomMod + ")\n";
         charStr += "Charisma: " + this.charisma + " (" + this.charismaMod + ")\n";
+        
+        charStr += "\nSkills:";
+        for (Skill s : Skill.values()) {
+            charStr += "\n" + s + ": " + this.skills[s.getIndex()];
+        }
+
+        /*
+        charStr += "\nAcrobatics: " + this.acrobatics;
+        charStr += "\nArcana: " + this.arcana;
+        charStr += "\nAthletics: " + this.athletics;
+        charStr += "\nBluff: " + this.bluff;
+        charStr += "\nDiplomacy: " + this.diplomacy;
+        charStr += "\nDungeoneering: " + this.dungeoneering;
+        charStr += "\nEndurance: " + this.endurance;
+        charStr += "\nHeal: " + this.heal;
+        charStr += "\nHistory: " + this.history;
+        charStr += "\nInsight: " + this.insight;
+        charStr += "\nIntimidate: " + this.intimidate;
+        charStr += "\nNature: " + this.nature;
+        charStr += "\nPerception: " + this.perception;
+        charStr += "\nReligion: " + this.religion;
+        charStr += "\nStealth: " + this.stealth;
+        charStr += "\nStreetwise: " + this.streetwise;
+        charStr += "\nThievery: " + this.thievery;
+        */
 
         return charStr;
     }

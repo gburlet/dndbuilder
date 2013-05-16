@@ -26,7 +26,6 @@ public class Cleric extends PlayerCharacter {
         };
         this.addWeaponProficiencies(wts);
 
-        /*
         // defense buffs
         this.will += 2;
 
@@ -36,8 +35,7 @@ public class Cleric extends PlayerCharacter {
         this.numHealingSurges = 7 + this.constitutionMod;
 
         // trained skills
-        this.religion += 5;
-        this.numSkillTrainsLeft += 3;
-        */
+        this.numSkillTrainsLeft += 4;
+        this.trainSkill(Skill.RELIGION);
     }
 }

@@ -31,7 +31,6 @@ public class Warlock extends PlayerCharacter {
         };
         this.addImplementProficiencies(its);
 
-        /*
         // defense buffs
         this.will++;
         this.reflex++;
@@ -43,6 +42,5 @@ public class Warlock extends PlayerCharacter {
 
         // trained skills
         this.numSkillTrainsLeft += 4;
-        */
     }
 }

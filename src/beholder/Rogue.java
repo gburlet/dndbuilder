@@ -23,7 +23,6 @@ public class Rogue extends PlayerCharacter {
         };
         this.addWeaponProficiencies(wts);
 
-        /*
         // defense buffs
         this.reflex += 2;
 
@@ -33,9 +32,8 @@ public class Rogue extends PlayerCharacter {
         this.numHealingSurges = 6 + this.constitutionMod;
 
         // trained skills
-        this.stealth += 5;
-        this.thievery += 5;
-        this.numSkillTrainsLeft += 4;
-        */
+        this.numSkillTrainsLeft += 6;
+        this.trainSkill(Skill.STEALTH);
+        this.trainSkill(Skill.THIEVERY);
     }
 }

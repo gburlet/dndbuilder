@@ -35,7 +35,6 @@ public class Paladin extends PlayerCharacter {
         ImplementType[] its = new ImplementType[] {ImplementType.HOLYSYMBOL};
         this.addImplementProficiencies(its);
 
-        /*
         // defense buffs
         this.fortitude++;
         this.reflex++;
@@ -48,6 +47,5 @@ public class Paladin extends PlayerCharacter {
 
         // trained skills
         this.numSkillTrainsLeft += 3;
-        */
     }
 }
