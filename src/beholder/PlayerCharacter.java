@@ -89,7 +89,7 @@ public class PlayerCharacter {
     // PC maitenance
     protected int numSkillTrainsLeft;
     protected int numLanguagesLeft;
-    protected int numAbilitiesLeft;
+    protected int abilityPointsLeft;
     protected int numFeatsLeft;
     protected int numAtWillPowersLeft;
     protected int numEncounterPowersLeft;
@@ -206,7 +206,7 @@ public class PlayerCharacter {
         // become level one
         this.levelUp();
 
-        this.numAbilitiesLeft = 32;
+        this.abilityPointsLeft = 32;
 
         // starting gold
         this.goldPieces = 100;
@@ -293,8 +293,8 @@ public class PlayerCharacter {
                 this.addLanguage(Language.DRACONIC);
 
                 // ability buffs
-                this.passiveStrength = 2;
-                this.passiveCharisma = 2;
+                this.passiveStrength = this.strength = 2;
+                this.passiveCharisma = this.charisma = 2;
 
                 // skill bonuses
                 this.history += 2;
@@ -308,8 +308,8 @@ public class PlayerCharacter {
                 this.addLanguage(Language.DWARVEN);
 
                 // ability buffs
-                this.passiveConstitution = 2;
-                this.passiveWisdom = 2;
+                this.passiveConstitution = this.constitution = 2;
+                this.passiveWisdom = this.wisdom = 2;
 
                 // skill bonuses
                 this.dungeoneering += 2;
@@ -323,8 +323,8 @@ public class PlayerCharacter {
                 this.addLanguage(Language.ELVEN);
 
                 // ability buffs
-                this.passiveDexterity = 2;
-                this.passiveIntelligence = 2;
+                this.passiveDexterity = this.dexterity = 2;
+                this.passiveIntelligence = this.intelligence = 2;
 
                 // skill bonuses
                 this.arcana += 2;
@@ -347,8 +347,8 @@ public class PlayerCharacter {
                 this.addLanguage(Language.ELVEN);
 
                 // ability buffs
-                this.passiveDexterity = 2;
-                this.passiveWisdom = 2;
+                this.passiveDexterity = this.dexterity = 2;
+                this.passiveWisdom = this.wisdom = 2;
 
                 // skill bonuses
                 this.nature += 2;
@@ -367,8 +367,8 @@ public class PlayerCharacter {
                 this.numLanguagesLeft++;
 
                 // ability buffs
-                this.passiveConstitution = 2;
-                this.passiveCharisma = 2;
+                this.passiveConstitution = this.constitution = 2;
+                this.passiveCharisma = this.charisma =2;
 
                 // skill bonuses
                 this.diplomacy += 2;
@@ -385,8 +385,8 @@ public class PlayerCharacter {
                 this.numLanguagesLeft++;
 
                 // ability buffs
-                this.passiveDexterity = 2;
-                this.passiveCharisma = 2;
+                this.passiveDexterity = this.dexterity = 2;
+                this.passiveCharisma = this.charisma = 2;
 
                 // skill bonuses
                 this.acrobatics += 2;
@@ -417,8 +417,8 @@ public class PlayerCharacter {
                 this.numLanguagesLeft++;
 
                 // ability buffs
-                this.passiveIntelligence = 2;
-                this.passiveCharisma = 2;
+                this.passiveIntelligence = this.intelligence = 2;
+                this.passiveCharisma = this.charisma = 2;
 
                 // skill bonuses
                 this.bluff += 2;
@@ -432,79 +432,114 @@ public class PlayerCharacter {
     }
 
     public void setStrength(int s) {
+        if (s < 8) {
+            s = 8;
+        }
+
+        int currentCost = this.calcScoreCost(this.strength);
         int cost = this.calcScoreCost(s);
-        if (cost > this.numAbilitiesLeft) {
+        if (cost > this.abilityPointsLeft) {
             // calculate max ability score possible
             s = this.calcMaxAbilityScore();
             cost = this.calcScoreCost(s);
         }
 
-        this.numAbilitiesLeft -= cost;
+        this.abilityPointsLeft -= (cost - currentCost);
         this.strength = s + this.passiveStrength;
         this.strengthMod = this.calcAbilityModifier(this.strength);
     }
 
     public void setConstitution(int c) {
+        if (c < 8) {
+            c = 8;
+        }
+
+        int currentCost = this.calcScoreCost(this.constitution);
+
         int cost = this.calcScoreCost(c);
-        if (cost > this.numAbilitiesLeft) {
+        if (cost > this.abilityPointsLeft) {
             // calculate max ability score possible
             c = this.calcMaxAbilityScore();
             cost = this.calcScoreCost(c);
         }
 
-        this.numAbilitiesLeft -= cost;
+        this.abilityPointsLeft -= (cost - currentCost);
         this.constitution = c + this.passiveConstitution;
         this.constitutionMod = this.calcAbilityModifier(this.constitution);
     }
 
     public void setDexterity(int d) {
+        if (d < 8) {
+            d = 8;
+        }
+
+        int currentCost = this.calcScoreCost(this.dexterity);
+
         int cost = this.calcScoreCost(d);
-        if (cost > this.numAbilitiesLeft) {
+        if (cost > this.abilityPointsLeft) {
             // calculate max ability score possible
             d = this.calcMaxAbilityScore();
             cost = this.calcScoreCost(d);
         }
 
-        this.numAbilitiesLeft -= cost;
+        this.abilityPointsLeft -= (cost - currentCost);
         this.dexterity = d + this.passiveDexterity;
         this.dexterityMod = this.calcAbilityModifier(this.dexterity);
     }
 
     public void setIntelligence(int i) {
+        if (i < 8) {
+            i = 8;
+        }
+
+        int currentCost = this.calcScoreCost(this.intelligence);
+
         int cost = this.calcScoreCost(i);
-        if (cost > this.numAbilitiesLeft) {
+        if (cost > this.abilityPointsLeft) {
             // calculate max ability score possible
             i = this.calcMaxAbilityScore();
             cost = this.calcScoreCost(i);
         }
 
-        this.numAbilitiesLeft -= cost;
+        this.abilityPointsLeft -= (cost - currentCost);
         this.intelligence = i + this.passiveIntelligence;
         this.intelligenceMod = this.calcAbilityModifier(this.intelligence);
     }
 
     public void setWisdom(int w) {
+        if (w < 8) {
+            w = 8;
+        }
+
+        int currentCost = this.calcScoreCost(this.wisdom);
+
         int cost = this.calcScoreCost(w);
-        if (cost > this.numAbilitiesLeft) {
+        if (cost > this.abilityPointsLeft) {
             // calculate max ability score possible
             w = this.calcMaxAbilityScore();
             cost = this.calcScoreCost(w);
         }
 
-        this.numAbilitiesLeft -= cost;
+        this.abilityPointsLeft -= (cost - currentCost);
         this.wisdom = w + this.passiveWisdom;
         this.wisdomMod = this.calcAbilityModifier(this.wisdom);
     }
 
     public void setCharisma(int c) {
+        if (c < 8) {
+            c = 8;
+        }
+
+        int currentCost = this.calcScoreCost(this.charisma);
+
         int cost = this.calcScoreCost(c);
-        if (cost > this.numAbilitiesLeft) {
+        if (cost > this.abilityPointsLeft) {
             // calculate max ability score possible
             c = this.calcMaxAbilityScore();
             cost = this.calcScoreCost(c);
         }
 
-        this.numAbilitiesLeft -= cost;
+        this.abilityPointsLeft -= (cost - currentCost);
         this.charisma = c + this.passiveCharisma;
         this.charismaMod = this.calcAbilityModifier(this.charisma);
     }
@@ -520,7 +555,7 @@ public class PlayerCharacter {
      * Helper function that calculates the cost of raising an ability score
      */
     private static int calcScoreCost(int score) {
-        int cost = Integer.MAX_VALUE;
+        int cost = 0;
         if (score >= 8 && score < 14) {
             cost = score - 8;
         }
@@ -553,7 +588,7 @@ public class PlayerCharacter {
          * Incrementally raise ability score until it violates the number of
          * points left to spend or reaches the max ability score for level one.
          */
-        while (cost <= this.numAbilitiesLeft && maxAbilityScore <= 18) {
+        while (cost <= this.abilityPointsLeft && maxAbilityScore <= 18) {
             maxAbilityScore++;
             cost = this.calcScoreCost(maxAbilityScore);
         }
@@ -603,7 +638,7 @@ public class PlayerCharacter {
                     break;
                 case 4: // 3,750 XP
                     this.numFeatsLeft++;
-                    this.numAbilitiesLeft += 2;
+                    this.abilityPointsLeft += 2;
                     break;
                 case 5: // 5,500 XP
                     this.numDailyPowersLeft++;
@@ -617,7 +652,7 @@ public class PlayerCharacter {
                     break;
                 case 8: // 13,000 XP
                     this.numFeatsLeft++;
-                    this.numAbilitiesLeft += 2;
+                    this.abilityPointsLeft += 2;
                     break;
                 case 9: // 16,500 XP
                     this.numDailyPowersLeft++;

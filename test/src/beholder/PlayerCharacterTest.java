@@ -45,12 +45,14 @@ public class PlayerCharacterTest {
 
         r.setRace(Race.HALFLING);
 
-        r.setStrength(16);
-        r.setConstitution(12);
-        r.setDexterity(16);
+        System.out.println(r);
+
+        r.setStrength(14);
+        r.setConstitution(11);
+        r.setDexterity(18);
         r.setIntelligence(10);
         r.setWisdom(10);
-        r.setCharisma(10);
+        r.setCharisma(8);
 
         System.out.println(r);
     }
