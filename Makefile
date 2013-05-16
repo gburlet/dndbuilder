@@ -7,6 +7,7 @@ BUILD_PATH=bin
 TEST_BUILD_PATH=test/bin
 TRANSLATE_PATH=translation
 TRANSLATOR=../j2objc/dist/j2objc
+DATA_PATH=data
 
 pc: $(SRC)
 	$(CC) $< -d $(BUILD_PATH)
@@ -20,6 +21,10 @@ runtests: test
 translate:
 	mkdir -p $(TRANSLATE_PATH)
 	$(TRANSLATOR) -d $(TRANSLATE_PATH) $(SRC)
+
+database:
+	touch $(DATA_PATH)/beholder.db
+	python create_db.py
 
 clean:
 	rm -rf $(BUILD_PATH) $(TEST_BUILD_PATH) $(TRANSLATE_PATH)

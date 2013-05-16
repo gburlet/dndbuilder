@@ -109,11 +109,6 @@ public class PlayerCharacter {
         HALFELF, HALFLING, HUMAN, TIEFLING
     }
 
-    public enum PCClass {
-        CLERIC, FIGHTER, PALADIN, RANGER, 
-        ROGUE, WARLOCK, WARLORD, WIZARD
-    }
-
     public enum PowerSource {
         ARCANE, DIVINE, MARTIAL, OTHER
     }
@@ -738,26 +733,6 @@ public class PlayerCharacter {
         for (Skill s : Skill.values()) {
             charStr += "\n" + s + ": " + this.skills[s.getIndex()];
         }
-
-        /*
-        charStr += "\nAcrobatics: " + this.acrobatics;
-        charStr += "\nArcana: " + this.arcana;
-        charStr += "\nAthletics: " + this.athletics;
-        charStr += "\nBluff: " + this.bluff;
-        charStr += "\nDiplomacy: " + this.diplomacy;
-        charStr += "\nDungeoneering: " + this.dungeoneering;
-        charStr += "\nEndurance: " + this.endurance;
-        charStr += "\nHeal: " + this.heal;
-        charStr += "\nHistory: " + this.history;
-        charStr += "\nInsight: " + this.insight;
-        charStr += "\nIntimidate: " + this.intimidate;
-        charStr += "\nNature: " + this.nature;
-        charStr += "\nPerception: " + this.perception;
-        charStr += "\nReligion: " + this.religion;
-        charStr += "\nStealth: " + this.stealth;
-        charStr += "\nStreetwise: " + this.streetwise;
-        charStr += "\nThievery: " + this.thievery;
-        */
 
         return charStr;
     }
