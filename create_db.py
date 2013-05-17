@@ -1,14 +1,12 @@
 #!/usr/local/bin/python
 
+import os
 import csv
 import sqlite3 as sqlite
 
 class DataParser:
 
-    def __init__(self, db_path, feats_path, powers_path):
-        self._feats_path = feats_path
-        self._powers_path = powers_path
-
+    def __init__(self, db_path):
         try:
             self._con = sqlite.connect(db_path)
         except sqlite.Error, e:
@@ -18,67 +16,84 @@ class DataParser:
         if self._con:
             self._con.close()
 
-    def populate_feats(self, feats_path):
+    def populate_weapons(self, weapons_path):
         cur = self._con.cursor()
 
         # create database table
         try:
-            cur.execute("DROP TABLE Feats")
+            cur.execute("DROP TABLE Weapons")
         except sqlite.OperationalError:
             pass
 
-        sql = "CREATE TABLE Feats(Name TEXT, Type TEXT, Prerequisites TEXT, Benefit TEXT, Source TEXT)"
+        fields = ("Weapon TEXT", "WeaponGroup TEXT", "ProficiencyBonus INT DEFAULT '0'", "Dice INT DEFAULT '1'", 
+                  "Damage INT DEFAULT '0'", "ShortRange INT DEFAULT '0'", "LongRange INT DEFAULT '0'", "Properties TEXT", 
+                  "Category TEXT", "Hands INT DEFAULT '1'", "Melee INT '1'", "Book TEXT")
+        sql = "CREATE TABLE Weapons(%s)" % ', '.join(fields)
         cur.execute(sql)
 
-        with open(feats_path, 'rU') as ff:
-            featlines = csv.reader(ff, dialect=csv.excel)
-            for i, f in enumerate(featlines):
+        with open(weapons_path, 'rU') as f:
+            lines = csv.reader(f, dialect=csv.excel)
+            for i, l in enumerate(lines):
                 # skip header
                 if i == 0:
                     continue
 
-                # feat name: 0
-                # feat type (heroic, paragon, epic): 1
-                # prerequisites: 2
-                # benefit: 3
-                # source (PHB, ...): 4
-                sql = "INSERT INTO Feats VALUES(?, ?, ?, ?, ?)"
-                cur.execute(sql, (f[0], f[1], f[2], f[3], f[4]))
+                l = map(DataParser._sanitize, l)
+                sql = "INSERT INTO Weapons VALUES(%s)" % ', '.join(['?' for f in fields])
+
+                # data sanitization
+                wgroup = l[2]
+                if l[3]:
+                    wgroup += ', %s' % l[3]
+                wproperty = l[9]
+                if l[10]:
+                    wproperty += ', %s' % l[10]
+
+                values = (l[0], wgroup, l[4], l[5], l[6], l[7], l[8], wproperty, l[11], l[12], l[13], l[1])
+                cur.execute(sql, values)
 
         self._con.commit()
 
-    def populate_powers(self, powers_path):
-        cur = self._con.cursor()
-
-        # create database table
-        try:
-            cur.execute("DROP TABLE Powers")
-        except sqlite.OperationalError:
-            pass
-        sql = "CREATE TABLE Powers(Name TEXT, Type TEXT, Class TEXT, Level INT)"
-        cur.execute(sql)
-
-        with open(powers_path, 'rU') as pf:
-            powerlines = csv.reader(pf, dialect=csv.excel)
-            for i, p in enumerate(powerlines):
-                # skip header
-                if i == 0:
-                    continue
-
-                # power name: 0
-                # power type: 1
-                # class: 2
-                # required level: 3
-                sql = "INSERT INTO Powers VALUES(?, ?, ?, ?)"
-                cur.execute(sql, (p[0], p[1], p[2], int(p[3])))
-
-        self._con.commit()
-
+    @staticmethod
+    def _sanitize(x):
+        '''
+        Sanitize data fields for missing references in excel data files
+        '''
+        x = x.strip()
+        if x == '#REF!':
+            return ''
+        elif x == 'TRUE':
+            return '1'
+        elif x == 'FALSE':
+            return '0'
+        else:
+            return x
+     
 if __name__ == '__main__':
-    db_path = '/Users/gburlet/Projects/dndbuilder/data/beholder.db'
-    feats_path = '/Users/gburlet/Projects/dndbuilder/data/feats.csv'
-    powers_path = '/Users/gburlet/Projects/dndbuilder/data/powers.csv'
+    data_root = '/Users/gburlet/Projects/dndbuilder/data'
 
-    dp = DataParser(db_path, feats_path, powers_path)
-    dp.populate_feats(feats_path)
-    dp.populate_powers(powers_path)
+    db_path = os.path.join(data_root, 'beholder.db')
+    dp = DataParser(db_path)
+
+    # Powers, feats, and rituals
+    atwillpowers_path = os.path.join(data_root, 'atwillpowers.csv')
+    dailypowers_path = os.path.join(data_root, 'dailypowers.csv')
+    encounterpowers_path = os.path.join(data_root, 'encounterpowers.csv')
+    utilitypowers_path = os.path.join(data_root, 'utilitypowers.csv')
+    feats_path = os.path.join(data_root, 'feats.csv')
+    rituals_path = os.path.join(data_root, 'rituals.csv')
+
+    # Armor
+    armor_path = os.path.join(data_root, 'armor.csv')
+    magicarmor_path = os.path.join(data_root, 'magicarmor.csv')
+
+    # Weapons
+    weapons_path = os.path.join(data_root, 'weapons.csv')
+    magicweapons_path = os.path.join(data_root, 'magicweapons.csv')
+    implement_path = os.path.join(data_root, 'implements.csv')
+
+    dp.populate_weapons(weapons_path)
+
+    # Equipment
+    equipment_path = os.path.join(data_root, 'equipment.csv')
+    magicitems_path = os.path.join(data_root, 'magicitems.csv')
