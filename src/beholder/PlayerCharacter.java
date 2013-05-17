@@ -36,7 +36,6 @@ public class PlayerCharacter {
 
     protected String name;
     protected Race race;
-    protected PCClass pcClass;
     protected PowerSource powerSource;
 
     protected int experience;
