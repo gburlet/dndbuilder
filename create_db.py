@@ -26,8 +26,8 @@ class DataParser:
             pass
 
         fields = ("Weapon TEXT", "WeaponGroup TEXT", "ProficiencyBonus INT DEFAULT '0'", "Dice INT DEFAULT '1'", 
-                  "Damage INT DEFAULT '0'", "ShortRange INT DEFAULT '0'", "LongRange INT DEFAULT '0'", "Properties TEXT", 
-                  "Category TEXT", "Hands INT DEFAULT '1'", "Melee INT '1'", "Book TEXT")
+                  "Damage INT DEFAULT '0'", "ShortRange INT", "LongRange INT", "Properties TEXT", 
+                  "Category TEXT", "Hands INT", "Melee INT", "Book TEXT")
         sql = "CREATE TABLE Weapons(%s)" % ', '.join(fields)
         cur.execute(sql)
 
