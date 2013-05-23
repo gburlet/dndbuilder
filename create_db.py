@@ -54,6 +54,37 @@ class DataParser:
 
         self._con.commit()
 
+    def populate_magicweapons(self, magicweapons_path):
+        cur = self._con.cursor()
+
+        # create database table
+        try:
+            cur.execute("DROP TABLE MagicWeapons")
+        except sqlite.OperationalError:
+            pass
+
+        fields = ("Weapon TEXT", "Level INT", "Book TEXT", "Bonus INT", "Any INT", "Melee INT", "Ranged INT", "Thrown INT", "Axe INT",
+                  "Box INT", "Crossbow INT", "Flail INT", "Hammer INT", "HeavyBlade INT", "LightBlade INT", "Mace INT", "Pick INT",
+                  "Polearm INT", "Sling INT", "Spear INT", "Staff INT", "HandCrossbow INT", "Dagger INT", "Greatsword INT", "Longsword INT",
+                  "Sickle INT", "SpikedGauntlet INT", "Scourge INT", "TripleHeadedFlail INT", "Whip INT")
+        sql = "CREATE TABLE MagicWeapons(%s)" % ', '.join(fields)
+        cur.execute(sql)
+
+        with open(magicweapons_path, 'rU') as f:
+            lines = csv.reader(f, dialect=csv.excel)
+            for i, l in enumerate(lines):
+                # skip header
+                if i == 0:
+                    continue
+
+                l = map(DataParser._sanitize, l)
+                sql = "INSERT INTO MagicWeapons VALUES(%s)" % ', '.join(['?' for f in fields])
+
+                values = l
+                cur.execute(sql, values)
+
+        self._con.commit()
+
     @staticmethod
     def _sanitize(x):
         '''
@@ -93,6 +124,7 @@ if __name__ == '__main__':
     implement_path = os.path.join(data_root, 'implements.csv')
 
     dp.populate_weapons(weapons_path)
+    dp.populate_magicweapons(magicweapons_path)
 
     # Equipment
     equipment_path = os.path.join(data_root, 'equipment.csv')
