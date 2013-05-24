@@ -3,6 +3,8 @@ package beholder;
 import beholder.PlayerCharacter;
 import beholder.PlayerCharacter.*;
 
+import java.sql.*;
+
 public class Paladin extends PlayerCharacter {
     public Paladin(String name) {
         super(name);
@@ -48,4 +50,21 @@ public class Paladin extends PlayerCharacter {
         // trained skills
         this.numSkillTrainsLeft += 3;
     }
+
+    public ResultSet getAvailableAtWillPowers() {
+        return this.getAvailableAtWillPowers("Paladin");
+    }
+
+    public ResultSet getAvailableDailyPowers() {
+        return this.getAvailableDailyPowers("Paladin");
+    }
+
+    public ResultSet getAvailableEncounterPowers() {
+        return this.getAvailableEncounterPowers("Paladin");
+    }
+
+    public ResultSet getAvailableUtilityPowers() {
+        return this.getAvailableUtilityPowers("Paladin");
+    }
+
 }

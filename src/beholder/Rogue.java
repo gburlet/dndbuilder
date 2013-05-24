@@ -3,6 +3,8 @@ package beholder;
 import beholder.PlayerCharacter;
 import beholder.PlayerCharacter.*;
 
+import java.sql.*;
+
 public class Rogue extends PlayerCharacter {
     public Rogue(String name) {
         super(name);
@@ -35,5 +37,21 @@ public class Rogue extends PlayerCharacter {
         this.numSkillTrainsLeft += 6;
         this.trainSkill(Skill.STEALTH);
         this.trainSkill(Skill.THIEVERY);
+    }
+
+    public ResultSet getAvailableAtWillPowers() {
+        return this.getAvailableAtWillPowers("Rogue");
+    }
+
+    public ResultSet getAvailableDailyPowers() {
+        return this.getAvailableDailyPowers("Rogue");
+    }
+
+    public ResultSet getAvailableEncounterPowers() {
+        return this.getAvailableEncounterPowers("Rogue");
+    }
+
+    public ResultSet getAvailableUtilityPowers() {
+        return this.getAvailableUtilityPowers("Rogue");
     }
 }

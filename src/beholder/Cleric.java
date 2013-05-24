@@ -3,6 +3,8 @@ package beholder;
 import beholder.PlayerCharacter;
 import beholder.PlayerCharacter.*;
 
+import java.sql.*;
+
 public class Cleric extends PlayerCharacter {
     public Cleric (String name) {
         super(name);
@@ -38,4 +40,21 @@ public class Cleric extends PlayerCharacter {
         this.numSkillTrainsLeft += 4;
         this.trainSkill(Skill.RELIGION);
     }
+
+    public ResultSet getAvailableAtWillPowers() {
+        return this.getAvailableAtWillPowers("Cleric");
+    }
+
+    public ResultSet getAvailableDailyPowers() {
+        return this.getAvailableDailyPowers("Cleric");
+    }
+
+    public ResultSet getAvailableEncounterPowers() {
+        return this.getAvailableEncounterPowers("Cleric");
+    }
+
+    public ResultSet getAvailableUtilityPowers() {
+        return this.getAvailableUtilityPowers("Cleric");
+    }
+
 }

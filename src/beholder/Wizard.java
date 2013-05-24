@@ -3,6 +3,8 @@ package beholder;
 import beholder.PlayerCharacter;
 import beholder.PlayerCharacter.*;
 
+import java.sql.*;
+
 public class Wizard extends PlayerCharacter {
     public Wizard(String name) {
         super(name);
@@ -38,4 +40,21 @@ public class Wizard extends PlayerCharacter {
         this.numSkillTrainsLeft += 4;
         this.trainSkill(Skill.ARCANA);
     }
+
+    public ResultSet getAvailableAtWillPowers() {
+        return this.getAvailableAtWillPowers("Wizard");
+    }
+
+    public ResultSet getAvailableDailyPowers() {
+        return this.getAvailableDailyPowers("Wizard");
+    }
+
+    public ResultSet getAvailableEncounterPowers() {
+        return this.getAvailableEncounterPowers("Wizard");
+    }
+
+    public ResultSet getAvailableUtilityPowers() {
+        return this.getAvailableUtilityPowers("Wizard");
+    }
+
 }

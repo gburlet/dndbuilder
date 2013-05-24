@@ -3,6 +3,8 @@ package beholder;
 import beholder.PlayerCharacter;
 import beholder.PlayerCharacter.*;
 
+import java.sql.*;
+
 public class Warlord extends PlayerCharacter {
     public Warlord(String name) {
         super(name);
@@ -42,4 +44,21 @@ public class Warlord extends PlayerCharacter {
         // trained skills
         this.numSkillTrainsLeft += 4;
     }
+
+    public ResultSet getAvailableAtWillPowers() {
+        return this.getAvailableAtWillPowers("Warlord");
+    }
+
+    public ResultSet getAvailableDailyPowers() {
+        return this.getAvailableDailyPowers("Warlord");
+    }
+
+    public ResultSet getAvailableEncounterPowers() {
+        return this.getAvailableEncounterPowers("Warlord");
+    }
+
+    public ResultSet getAvailableUtilityPowers() {
+        return this.getAvailableUtilityPowers("Warlord");
+    }
+
 }

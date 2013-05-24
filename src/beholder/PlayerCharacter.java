@@ -26,6 +26,7 @@ package beholder;
 import java.util.Vector;
 import java.util.Arrays;
 import java.lang.Integer;
+import java.sql.*;
 import beholder.Die;
 
 /*
@@ -102,6 +103,9 @@ public class PlayerCharacter {
     protected int goldPieces;
     protected int silverPieces;
     protected int copperPieces;
+
+    // database connection
+    protected Connection db;
 
     public enum Race {
         DRAGONBORN, DWARF, ELADRIN, ELF,
@@ -199,6 +203,18 @@ public class PlayerCharacter {
 
         // starting gold
         this.goldPieces = 100;
+
+        this.db = null;
+
+        try {
+            Class.forName("org.sqlite.JDBC");
+            this.db = DriverManager.getConnection("jdbc:sqlite:data/beholder.db");
+            this.db.setAutoCommit(false);
+        }
+        catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+        }
     }
 
     public void setName(String name) {
@@ -712,6 +728,82 @@ public class PlayerCharacter {
                 this.fireResistance++;
             }
         }
+    }
+
+    public ResultSet getAvailableAtWillPowers(String className) {
+        ResultSet res = null;
+        try {
+            Statement stmt = this.db.createStatement();
+            String query = "SELECT * FROM AtWillPowers WHERE Book='PHB' AND Level <= " + this.level + " AND Class = '" + className + "';";
+            res = stmt.executeQuery(query);
+            while (res.next()) {
+                String power = res.getString("Power");
+                System.out.println(power);
+            }
+        }
+        catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+              System.exit(0);
+        }
+
+        return res;
+    }
+
+    public ResultSet getAvailableDailyPowers(String className) {
+        ResultSet res = null;
+        try {
+            Statement stmt = this.db.createStatement();
+            String query = "SELECT * FROM DailyPowers WHERE Book='PHB' AND Level <= " + this.level + " AND Class = '" + className + "';";
+            res = stmt.executeQuery(query);
+            while (res.next()) {
+                String power = res.getString("Power");
+                System.out.println(power);
+            }
+        }
+        catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+              System.exit(0);
+        }
+
+        return res;
+    }
+
+    public ResultSet getAvailableEncounterPowers(String className) {
+        ResultSet res = null;
+        try {
+            Statement stmt = this.db.createStatement();
+            String query = "SELECT * FROM EncounterPowers WHERE Book='PHB' AND Level <= " + this.level + " AND Class = '" + className + "';";
+            res = stmt.executeQuery(query);
+            while (res.next()) {
+                String power = res.getString("Power");
+                System.out.println(power);
+            }
+        }
+        catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+              System.exit(0);
+        }
+
+        return res;
+    }
+
+    public ResultSet getAvailableUtilityPowers(String className) {
+        ResultSet res = null;
+        try {
+            Statement stmt = this.db.createStatement();
+            String query = "SELECT * FROM UtilityPowers WHERE Book='PHB' AND Level <= " + this.level + " AND Class = '" + className + "';";
+            res = stmt.executeQuery(query);
+            while (res.next()) {
+                String power = res.getString("Power");
+                System.out.println(power);
+            }
+        }
+        catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+              System.exit(0);
+        }
+
+        return res;
     }
 
     /*

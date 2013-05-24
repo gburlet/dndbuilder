@@ -32,6 +32,12 @@ public class PlayerCharacterTest {
     @Test
     public void testPaladin() {
         Paladin p = new Paladin("My Paladin");
+
+        p.setRace(Race.DRAGONBORN);
+
+        p.rollAbilityScores();
+
+        System.out.println(p);
     }
 
     @Test
