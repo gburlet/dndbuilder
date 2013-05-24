@@ -302,6 +302,43 @@ class DataParser:
 
         self._con.commit()
 
+    def populate_implements(self, implement_path):
+        cur = self._con.cursor()
+
+        # create database table
+        try:
+            cur.execute("DROP TABLE Implements")
+        except sqlite.OperationalError:
+            pass
+
+        fields = ("Implement TEXT", "Level INT", "Book TEXT", "Bonus INT", "Type TEXT", "SuperiorFeat INT", "Properties TEXT", 
+                  "EnergizedType TEXT", "Acrobatics INT", "Arcana INT", "Athletics INT", "Bluff INT", "Diplomacy INT", 
+                  "Dungeoneering INT", "Endurance INT", "Heal INT", "History INT", "Insight INT", "Intimidate INT", 
+                  "Nature INT", "Perception INT", "Religion INT", "Stealth INT", "Streetwise INT", "Thievery INT", 
+                  "Speed INT", "Initiative INT", "Surges INT", "SurgeValue INT", "Fortitude INT", "Reflex INT", "Will INT", 
+                  "ArmorClass INT", "Strength INT", "Dexterity INT", "Wisdom INT", "Ranged INT", "Melee INT")
+        sql = "CREATE TABLE Implements(%s)" % ', '.join(fields)
+        cur.execute(sql)
+
+        with open(implement_path, 'rU') as f:
+            lines = csv.reader(f, dialect=csv.excel)
+            for i, l in enumerate(lines):
+                # skip header
+                if i == 0:
+                    continue
+
+                l = map(DataParser._sanitize, l)
+                sql = "INSERT INTO Implements VALUES(%s)" % ', '.join(['?' for f in fields])
+                
+                # data sanitization
+                if l[7]:
+                    l[6] += ', %s' % l[7]
+                del l[7]
+                values = l[:len(fields)]
+                cur.execute(sql, values)
+
+        self._con.commit()
+
     def populate_equipment(self, equipment_path):
         cur = self._con.cursor()
 
@@ -412,6 +449,7 @@ if __name__ == '__main__':
 
     dp.populate_weapons(weapons_path)
     dp.populate_magicweapons(magicweapons_path)
+    dp.populate_implements(implement_path)
 
     # Equipment
     equipment_path = os.path.join(data_root, 'equipment.csv')
