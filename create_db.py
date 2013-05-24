@@ -16,6 +16,35 @@ class DataParser:
         if self._con:
             self._con.close()
 
+    def populate_armor(self, armor_path):
+        cur = self._con.cursor()
+
+        # create database table
+        try:
+            cur.execute("DROP TABLE Armor")
+        except sqlite.OperationalError:
+            pass
+
+        fields = ("Armor TEXT", "Bonus INT", "SkillCheck INT", "Speed INT", "Type TEXT", "Level INT", "Quality INT", "Category TEXT", 
+                  "Fortitude INT", "Reflex INT", "Will INT", "DamageReduction INT", "Book TEXT")
+        sql = "CREATE TABLE Armor(%s)" % ', '.join(fields)
+        cur.execute(sql)
+
+        with open(armor_path, 'rU') as f:
+            lines = csv.reader(f, dialect=csv.excel)
+            for i, l in enumerate(lines):
+                # skip header
+                if i == 0:
+                    continue
+
+                l = map(DataParser._sanitize, l)
+                sql = "INSERT INTO Armor VALUES(%s)" % ', '.join(['?' for f in fields])
+
+                values = (l[0], l[2], l[3], l[4], l[5], l[6], l[7], l[8], l[9], l[10], l[11], l[12], l[1])
+                cur.execute(sql, values)
+
+        self._con.commit()
+    
     def populate_weapons(self, weapons_path):
         cur = self._con.cursor()
 
@@ -117,6 +146,8 @@ if __name__ == '__main__':
     # Armor
     armor_path = os.path.join(data_root, 'armor.csv')
     magicarmor_path = os.path.join(data_root, 'magicarmor.csv')
+
+    dp.populate_armor(armor_path)
 
     # Weapons
     weapons_path = os.path.join(data_root, 'weapons.csv')
