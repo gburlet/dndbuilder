@@ -174,6 +174,39 @@ class DataParser:
 
         self._con.commit()
 
+    def populate_magicitems(self, magicitems_path):
+        cur = self._con.cursor()
+
+        # create database table
+        try:
+            cur.execute("DROP TABLE MagicItems")
+        except sqlite.OperationalError:
+            pass
+
+        fields = ("Slot TEXT", "Item TEXT", "Level INT", "Book TEXT", "Enhancement INT", "Acrobatics INT", "Arcana INT", 
+                  "Athletics INT", "Bluff INT", "Diplomacy INT", "Dungeoneering INT", "Endurance INT", "Heal INT", "History INT",
+                  "Insight INT", "Intimidate INT", "Nature INT", "Perception INT", "Religion INT", "Stealth INT",
+                  "Streetwise INT", "Thievery INT", "Speed INT", "Initiative INT", "Surges INT", "SurgeValue INT", 
+                  "Fortitude INT", "Reflex INT", "Will INT", "ArmorClass INT", "Strength INT", "Dexterity INT", 
+                  "Wisdom INT", "Ranged INT", "Melee INT", "Weapon INT")
+        sql = "CREATE TABLE MagicItems(%s)" % ', '.join(fields)
+        cur.execute(sql)
+
+        with open(magicitems_path, 'rU') as f:
+            lines = csv.reader(f, dialect=csv.excel)
+            for i, l in enumerate(lines):
+                # skip header
+                if i == 0:
+                    continue
+
+                l = map(DataParser._sanitize, l)
+                sql = "INSERT INTO MagicItems VALUES(%s)" % ', '.join(['?' for f in fields])
+
+                values = l[:len(fields)]
+                cur.execute(sql, values)
+
+        self._con.commit()
+
     @staticmethod
     def _sanitize(x):
         '''
@@ -223,3 +256,4 @@ if __name__ == '__main__':
     magicitems_path = os.path.join(data_root, 'magicitems.csv')
 
     dp.populate_equipment(equipment_path)
+    dp.populate_magicitems(magicitems_path)
