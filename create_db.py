@@ -16,6 +16,40 @@ class DataParser:
         if self._con:
             self._con.close()
 
+    def populate_atwillpowers(self, atwillpowers_path):
+        cur = self._con.cursor()
+
+        # create database table
+        try:
+            cur.execute("DROP TABLE AtWillPowers")
+        except sqlite.OperationalError:
+            pass
+
+        fields = ("Power TEXT", "Book TEXT", "Class TEXT", "Level INT", "Versus TEXT", "WeaponMultiplier INT", "Dice TEXT",
+                  "WeaponMultiplierLvl21 INT", "DamageTypes TEXT", "Extra TEXT", "Melee TEXT")
+        sql = "CREATE TABLE AtWillPowers(%s)" % ', '.join(fields)
+        cur.execute(sql)
+
+        with open(atwillpowers_path, 'rU') as f:
+            lines = csv.reader(f, dialect=csv.excel)
+            for i, l in enumerate(lines):
+                # skip header
+                if i == 0:
+                    continue
+
+                l = map(DataParser._sanitize, l)
+                sql = "INSERT INTO AtWillPowers VALUES(%s)" % ', '.join(['?' for f in fields])
+
+                # data sanitization
+                dmg_types = l[8]
+                if l[9]:
+                    dmg_types += ', %s' % l[9]
+
+                values = (l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7], dmg_types, l[10], l[11])
+                cur.execute(sql, values)
+
+        self._con.commit()
+
     def populate_armor(self, armor_path):
         cur = self._con.cursor()
 
@@ -235,6 +269,8 @@ if __name__ == '__main__':
     utilitypowers_path = os.path.join(data_root, 'utilitypowers.csv')
     feats_path = os.path.join(data_root, 'feats.csv')
     rituals_path = os.path.join(data_root, 'rituals.csv')
+
+    dp.populate_atwillpowers(atwillpowers_path)
 
     # Armor
     armor_path = os.path.join(data_root, 'armor.csv')
