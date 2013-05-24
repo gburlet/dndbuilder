@@ -54,11 +54,11 @@ class DataParser:
         except sqlite.OperationalError:
             pass
 
-        fields = ("Armor TEXT", "Level INT", "Bonus INT", "Any INT", "Cloth INT", "Leather INT", "Hide INT",
+        fields = ("Armor TEXT", "Level INT", "Bonus INT", "Book TEXT", "Any INT", "Cloth INT", "Leather INT", "Hide INT",
                   "Chain INT", "Scale INT", "Plate INT", "Acrobatics INT", "Arcana INT", "Athletics INT", 
                   "Bluff INT", "Diplomacy INT", "Dungeoneering INT", "Endurance INT", "Heal INT", "History INT",
                   "Insight INT", "Intimidate INT", "Nature INT", "Perception INT", "Religion INT", "Stealth INT",
-                  "Streetwise INT", "Thievery INT", "Book TEXT")
+                  "Streetwise INT", "Thievery INT")
         sql = "CREATE TABLE MagicArmor(%s)" % ', '.join(fields)
         cur.execute(sql)
 
@@ -72,8 +72,7 @@ class DataParser:
                 l = map(DataParser._sanitize, l)
                 sql = "INSERT INTO MagicArmor VALUES(%s)" % ', '.join(['?' for f in fields])
 
-                values = (l[0], l[1], l[2], l[4], l[5], l[6], l[7], l[8], l[9], l[10], l[11], l[12], l[13], l[14], 
-                          l[15], l[16], l[17], l[18], l[19], l[20], l[21], l[22], l[23], l[24], l[25], l[26], l[27], l[3])
+                values = l[:len(fields)]
                 cur.execute(sql, values)
 
         self._con.commit()
@@ -142,7 +141,35 @@ class DataParser:
                 l = map(DataParser._sanitize, l)
                 sql = "INSERT INTO MagicWeapons VALUES(%s)" % ', '.join(['?' for f in fields])
 
-                values = l
+                values = l[:len(fields)]
+                cur.execute(sql, values)
+
+        self._con.commit()
+
+    def populate_equipment(self, equipment_path):
+        cur = self._con.cursor()
+
+        # create database table
+        try:
+            cur.execute("DROP TABLE Equipment")
+        except sqlite.OperationalError:
+            pass
+
+        fields = ("Equipment TEXT", "Gold INT", "Silver INT", "Copper INT", "Weight INT")
+        sql = "CREATE TABLE Equipment(%s)" % ', '.join(fields)
+        cur.execute(sql)
+
+        with open(equipment_path, 'rU') as f:
+            lines = csv.reader(f, dialect=csv.excel)
+            for i, l in enumerate(lines):
+                # skip header
+                if i == 0:
+                    continue
+
+                l = map(DataParser._sanitize, l)
+                sql = "INSERT INTO Equipment VALUES(%s)" % ', '.join(['?' for f in fields])
+
+                values = l[:len(fields)]
                 cur.execute(sql, values)
 
         self._con.commit()
@@ -194,3 +221,5 @@ if __name__ == '__main__':
     # Equipment
     equipment_path = os.path.join(data_root, 'equipment.csv')
     magicitems_path = os.path.join(data_root, 'magicitems.csv')
+
+    dp.populate_equipment(equipment_path)
