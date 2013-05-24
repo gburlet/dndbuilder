@@ -45,6 +45,39 @@ class DataParser:
 
         self._con.commit()
     
+    def populate_magicarmor(self, magicarmor_path):
+        cur = self._con.cursor()
+
+        # create database table
+        try:
+            cur.execute("DROP TABLE MagicArmor")
+        except sqlite.OperationalError:
+            pass
+
+        fields = ("Armor TEXT", "Level INT", "Bonus INT", "Any INT", "Cloth INT", "Leather INT", "Hide INT",
+                  "Chain INT", "Scale INT", "Plate INT", "Acrobatics INT", "Arcana INT", "Athletics INT", 
+                  "Bluff INT", "Diplomacy INT", "Dungeoneering INT", "Endurance INT", "Heal INT", "History INT",
+                  "Insight INT", "Intimidate INT", "Nature INT", "Perception INT", "Religion INT", "Stealth INT",
+                  "Streetwise INT", "Thievery INT", "Book TEXT")
+        sql = "CREATE TABLE MagicArmor(%s)" % ', '.join(fields)
+        cur.execute(sql)
+
+        with open(magicarmor_path, 'rU') as f:
+            lines = csv.reader(f, dialect=csv.excel)
+            for i, l in enumerate(lines):
+                # skip header
+                if i == 0:
+                    continue
+
+                l = map(DataParser._sanitize, l)
+                sql = "INSERT INTO MagicArmor VALUES(%s)" % ', '.join(['?' for f in fields])
+
+                values = (l[0], l[1], l[2], l[4], l[5], l[6], l[7], l[8], l[9], l[10], l[11], l[12], l[13], l[14], 
+                          l[15], l[16], l[17], l[18], l[19], l[20], l[21], l[22], l[23], l[24], l[25], l[26], l[27], l[3])
+                cur.execute(sql, values)
+
+        self._con.commit()
+
     def populate_weapons(self, weapons_path):
         cur = self._con.cursor()
 
@@ -148,6 +181,7 @@ if __name__ == '__main__':
     magicarmor_path = os.path.join(data_root, 'magicarmor.csv')
 
     dp.populate_armor(armor_path)
+    dp.populate_magicarmor(magicarmor_path)
 
     # Weapons
     weapons_path = os.path.join(data_root, 'weapons.csv')
