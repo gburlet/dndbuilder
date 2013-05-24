@@ -134,6 +134,44 @@ class DataParser:
 
         self._con.commit()
 
+    def populate_feats(self, feats_path):
+        cur = self._con.cursor()
+
+        # create database table
+        try:
+            cur.execute("DROP TABLE Feats")
+        except sqlite.OperationalError:
+            pass
+
+        fields = ("Feat TEXT", "Description TEXT", "Book TEXT", "Strength INT", "Constitution INT", "Dexterity INT", 
+                  "Intelligence INT", "Wisdom INT", "Charisma INT", "Level INT", "Races TEXT", "Class TEXT", 
+                  "Acrobatics INT", "Arcana INT", "Athletics INT", "Bluff INT", "Diplomacy INT", "Dungeoneering INT", 
+                  "Endurance INT", "Heal INT", "History INT", "Insight INT", "Intimidate INT", "Nature INT", 
+                  "Perception INT", "Religion INT", "Stealth INT", "Streetwise INT", "Thievery INT", "Initiative INT",
+                  "Speed INT", "SurgeValue INT", "ArmorClass INT", "Fortitude INT", "Reflex INT", "Will INT")
+        sql = "CREATE TABLE Feats(%s)" % ', '.join(fields)
+        cur.execute(sql)
+
+        with open(feats_path, 'rU') as f:
+            lines = csv.reader(f, dialect=csv.excel)
+            for i, l in enumerate(lines):
+                # skip header
+                if i == 0:
+                    continue
+
+                l = map(DataParser._sanitize, l)
+                sql = "INSERT INTO Feats VALUES(%s)" % ', '.join(['?' for f in fields])
+
+                # data sanitization
+                if l[11]:
+                    l[10] += ', %s' % l[11]
+                del l[11]
+                
+                values = l[:len(fields)]
+                cur.execute(sql, values)
+
+        self._con.commit()
+
     def populate_armor(self, armor_path):
         cur = self._con.cursor()
 
@@ -358,6 +396,7 @@ if __name__ == '__main__':
     dp.populate_dailypowers(dailypowers_path)
     dp.populate_encounterpowers(encounterpowers_path)
     dp.populate_utilitypowers(utilitypowers_path)
+    dp.populate_feats(feats_path)
 
     # Armor
     armor_path = os.path.join(data_root, 'armor.csv')
