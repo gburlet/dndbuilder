@@ -172,6 +172,34 @@ class DataParser:
 
         self._con.commit()
 
+    def populate_rituals(self, rituals_path):
+        cur = self._con.cursor()
+
+        # create database table
+        try:
+            cur.execute("DROP TABLE Rituals")
+        except sqlite.OperationalError:
+            pass
+
+        fields = ("Ritual TEXT", "Book TEXT", "Level INT")
+        sql = "CREATE TABLE Rituals(%s)" % ', '.join(fields)
+        cur.execute(sql)
+
+        with open(rituals_path, 'rU') as f:
+            lines = csv.reader(f, dialect=csv.excel)
+            for i, l in enumerate(lines):
+                # skip header
+                if i == 0:
+                    continue
+
+                l = map(DataParser._sanitize, l)
+                sql = "INSERT INTO Rituals VALUES(%s)" % ', '.join(['?' for f in fields])
+
+                values = l[:len(fields)]
+                cur.execute(sql, values)
+
+        self._con.commit()
+
     def populate_armor(self, armor_path):
         cur = self._con.cursor()
 
@@ -434,6 +462,7 @@ if __name__ == '__main__':
     dp.populate_encounterpowers(encounterpowers_path)
     dp.populate_utilitypowers(utilitypowers_path)
     dp.populate_feats(feats_path)
+    dp.populate_rituals(rituals_path)
 
     # Armor
     armor_path = os.path.join(data_root, 'armor.csv')
