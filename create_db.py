@@ -50,6 +50,34 @@ class DataParser:
 
         self._con.commit()
 
+    def populate_dailypowers(self, dailypowers_path):
+        cur = self._con.cursor()
+
+        # create database table
+        try:
+            cur.execute("DROP TABLE DailyPowers")
+        except sqlite.OperationalError:
+            pass
+
+        fields = ("Power TEXT", "Book TEXT", "Class TEXT", "Level INT")
+        sql = "CREATE TABLE DailyPowers(%s)" % ', '.join(fields)
+        cur.execute(sql)
+
+        with open(dailypowers_path, 'rU') as f:
+            lines = csv.reader(f, dialect=csv.excel)
+            for i, l in enumerate(lines):
+                # skip header
+                if i == 0:
+                    continue
+
+                l = map(DataParser._sanitize, l)
+                sql = "INSERT INTO DailyPowers VALUES(%s)" % ', '.join(['?' for f in fields])
+
+                values = l[:len(fields)]
+                cur.execute(sql, values)
+
+        self._con.commit()
+
     def populate_encounterpowers(self, encounterpowers_path):
         cur = self._con.cursor()
 
@@ -299,6 +327,7 @@ if __name__ == '__main__':
     rituals_path = os.path.join(data_root, 'rituals.csv')
 
     dp.populate_atwillpowers(atwillpowers_path)
+    dp.populate_dailypowers(dailypowers_path)
     dp.populate_encounterpowers(encounterpowers_path)
 
     # Armor
