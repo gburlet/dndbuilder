@@ -2,7 +2,9 @@ package beholder;
 
 import beholder.PlayerCharacter;
 import beholder.PlayerCharacter.*;
+import beholder.AtWillPower;
 
+import java.util.Vector;
 import java.sql.*;
 
 public class Rogue extends PlayerCharacter {
@@ -39,19 +41,21 @@ public class Rogue extends PlayerCharacter {
         this.trainSkill(Skill.THIEVERY);
     }
 
-    public ResultSet getAvailableAtWillPowers() {
+    public Vector<AtWillPower> getAvailableAtWillPowers() {
         return this.getAvailableAtWillPowers("Rogue");
     }
 
-    public ResultSet getAvailableDailyPowers() {
+    /*
+    public AtWillPower[] getAvailableDailyPowers() {
         return this.getAvailableDailyPowers("Rogue");
     }
 
-    public ResultSet getAvailableEncounterPowers() {
+    public AtWillPower[] getAvailableEncounterPowers() {
         return this.getAvailableEncounterPowers("Rogue");
     }
 
-    public ResultSet getAvailableUtilityPowers() {
+    public AtWillPower[] getAvailableUtilityPowers() {
         return this.getAvailableUtilityPowers("Rogue");
     }
+    */
 }

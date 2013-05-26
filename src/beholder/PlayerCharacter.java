@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.lang.Integer;
 import java.sql.*;
 import beholder.Die;
+import beholder.AtWillPower;
 
 /*
  * This class represents a player character (PC)
@@ -70,6 +71,12 @@ public class PlayerCharacter {
     // Skill Values
     protected int[] skills;
 
+    // Powers: list of ids from the database
+    protected Vector<AtWillPower> atwillpowers;
+    protected Vector<Integer> encounterpowers;
+    protected Vector<Integer> dailypowers;
+    protected Vector<Integer> utilitypowers;
+    
     // PC maitenance
     protected int numSkillTrainsLeft;
     protected int numLanguagesLeft;
@@ -195,6 +202,11 @@ public class PlayerCharacter {
         this.implementProficiencies = new Vector<ImplementType>();
         this.armorProficiencies = new Vector<ArmorType>();
         this.skills = new int[17];
+
+        this.atwillpowers = new Vector<AtWillPower>();
+        this.encounterpowers = new Vector<Integer>();
+        this.dailypowers = new Vector<Integer>();
+        this.utilitypowers = new Vector<Integer>();
 
         // become level one
         this.levelUp();
@@ -730,11 +742,64 @@ public class PlayerCharacter {
         }
     }
 
-    public ResultSet getAvailableAtWillPowers(String className) {
-        ResultSet res = null;
+    public Vector<AtWillPower> getAvailableAtWillPowers(String className) {
+        Vector<AtWillPower> awps = null;
+
         try {
             Statement stmt = this.db.createStatement();
-            String query = "SELECT * FROM AtWillPowers WHERE Book='PHB' AND Level <= " + this.level + " AND Class = '" + className + "';";
+            String query = "SELECT ROWID, * FROM AtWillPowers WHERE Book='PHB' AND Level <= " + this.level + " AND Class = '" + className + "';";
+            ResultSet res = stmt.executeQuery(query);
+
+            awps = new Vector<AtWillPower>(2);
+            for (int i = 0; res.next(); i++) {
+                int id = res.getInt("ROWID");
+                String power = res.getString("Power");
+                String book = res.getString("Book");
+                String pcClass = res.getString("Class");
+                int level = res.getInt("Level");
+                String versus = res.getString("Versus");
+                int wm = res.getInt("WeaponMultiplier");
+                String dice = res.getString("Dice");
+                int wm21 = res.getInt("WeaponMultiplierLvl21");
+                String dts = res.getString("DamageTypes");
+                String extra = res.getString("Extra");
+                int m = res.getInt("Melee");
+                boolean melee = false;
+                if (res.getInt("Melee") == 1) {
+                    melee = true;
+                }
+
+                awps.add(new AtWillPower(id, power, book, pcClass, level, versus, wm, dice, wm21, dts, extra, melee));
+            }
+            stmt.close();
+            res.close();
+        }
+        catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return awps;
+    }
+
+    public boolean addAtWillPower(AtWillPower awp) {
+        if (this.numAtWillPowersLeft > 0) {
+            // create struct of at-will power info for easy display
+            this.atwillpowers.add(awp);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /*
+    public ResultSet getAvailableEncounterPowers(String className) {
+        Statement stmt = null;
+        ResultSet res = null;
+
+        try {
+            stmt = this.db.createStatement();
+            String query = "SELECT * FROM EncounterPowers WHERE Book='PHB' AND Level <= " + this.level + " AND Class = '" + className + "';";
             res = stmt.executeQuery(query);
             while (res.next()) {
                 String power = res.getString("Power");
@@ -743,14 +808,30 @@ public class PlayerCharacter {
         }
         catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
-              System.exit(0);
+            System.exit(0);
+        }
+        finally {
+            stmt.close();
+            res.close();
         }
 
         return res;
     }
 
+    public boolean addEncounterPower(int id) {
+        if (this.numEncounterPowersLeft > 0) {
+            this.encounterpowers.add(id);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     public ResultSet getAvailableDailyPowers(String className) {
+        Statement stmt = null;
         ResultSet res = null;
+
         try {
             Statement stmt = this.db.createStatement();
             String query = "SELECT * FROM DailyPowers WHERE Book='PHB' AND Level <= " + this.level + " AND Class = '" + className + "';";
@@ -762,33 +843,30 @@ public class PlayerCharacter {
         }
         catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
-              System.exit(0);
+            System.exit(0);
+        }
+        finally {
+            stmt.close();
+            res.close();
         }
 
         return res;
     }
 
-    public ResultSet getAvailableEncounterPowers(String className) {
-        ResultSet res = null;
-        try {
-            Statement stmt = this.db.createStatement();
-            String query = "SELECT * FROM EncounterPowers WHERE Book='PHB' AND Level <= " + this.level + " AND Class = '" + className + "';";
-            res = stmt.executeQuery(query);
-            while (res.next()) {
-                String power = res.getString("Power");
-                System.out.println(power);
-            }
+    public boolean addDailyPower(int id) {
+        if (this.numDailyPowersLeft > 0) {
+            this.dailypowers.add(id);
+            return true;
         }
-        catch (Exception e) {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-              System.exit(0);
+        else {
+            return false;
         }
-
-        return res;
     }
 
     public ResultSet getAvailableUtilityPowers(String className) {
+        Statement stmt = null;
         ResultSet res = null;
+
         try {
             Statement stmt = this.db.createStatement();
             String query = "SELECT * FROM UtilityPowers WHERE Book='PHB' AND Level <= " + this.level + " AND Class = '" + className + "';";
@@ -802,9 +880,24 @@ public class PlayerCharacter {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
               System.exit(0);
         }
+        finally {
+            stmt.close();
+            res.close();
+        }
 
         return res;
     }
+
+    public boolean addUtilityPower(int id) {
+        if (this.numUtilityPowersLeft > 0) {
+            this.utilitypowers.add(id);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    */
 
     /*
      * Overload toString method to print character information
@@ -823,6 +916,11 @@ public class PlayerCharacter {
         charStr += "\nSkills:";
         for (Skill s : Skill.values()) {
             charStr += "\n" + s + ": " + this.skills[s.getIndex()];
+        }
+
+        charStr += "\nAt-will Powers:";
+        for (AtWillPower awp: this.atwillpowers) {
+            charStr += "\n" + awp;
         }
 
         return charStr;

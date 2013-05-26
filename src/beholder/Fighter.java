@@ -2,7 +2,9 @@ package beholder;
 
 import beholder.PlayerCharacter;
 import beholder.PlayerCharacter.*;
+import beholder.AtWillPower;
 
+import java.util.Vector;
 import java.sql.*;
 
 public class Fighter extends PlayerCharacter {
@@ -46,20 +48,20 @@ public class Fighter extends PlayerCharacter {
         this.numSkillTrainsLeft += 3;
     }
 
-    public ResultSet getAvailableAtWillPowers() {
+    public Vector<AtWillPower> getAvailableAtWillPowers() {
         return this.getAvailableAtWillPowers("Fighter");
     }
-
-    public ResultSet getAvailableDailyPowers() {
+/*
+    public AtWillPower[] getAvailableDailyPowers() {
         return this.getAvailableDailyPowers("Fighter");
     }
 
-    public ResultSet getAvailableEncounterPowers() {
+    public AtWillPower[] getAvailableEncounterPowers() {
         return this.getAvailableEncounterPowers("Fighter");
     }
 
-    public ResultSet getAvailableUtilityPowers() {
+    public AtWillPower[] getAvailableUtilityPowers() {
         return this.getAvailableUtilityPowers("Fighter");
     }
-
+*/
 }

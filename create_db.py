@@ -43,9 +43,10 @@ class DataParser:
                 # data sanitization
                 dmg_types = l[8]
                 if l[9]:
-                    dmg_types += ', %s' % l[9]
+                    l[8] += ', %s' % l[9]
+                del l[9]
 
-                values = (l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7], dmg_types, l[10], l[11])
+                values = l[:len(fields)]
                 cur.execute(sql, values)
 
         self._con.commit()

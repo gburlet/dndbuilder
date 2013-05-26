@@ -2,7 +2,9 @@ package beholder;
 
 import beholder.PlayerCharacter;
 import beholder.PlayerCharacter.*;
+import beholder.AtWillPower;
 
+import java.util.Vector;
 import java.sql.*;
 
 public class Wizard extends PlayerCharacter {
@@ -41,20 +43,20 @@ public class Wizard extends PlayerCharacter {
         this.trainSkill(Skill.ARCANA);
     }
 
-    public ResultSet getAvailableAtWillPowers() {
+    public Vector<AtWillPower> getAvailableAtWillPowers() {
         return this.getAvailableAtWillPowers("Wizard");
     }
 
-    public ResultSet getAvailableDailyPowers() {
+/*    public AtWillPower[] getAvailableDailyPowers() {
         return this.getAvailableDailyPowers("Wizard");
     }
 
-    public ResultSet getAvailableEncounterPowers() {
+    public AtWillPower[] getAvailableEncounterPowers() {
         return this.getAvailableEncounterPowers("Wizard");
     }
 
-    public ResultSet getAvailableUtilityPowers() {
+    public AtWillPower[] getAvailableUtilityPowers() {
         return this.getAvailableUtilityPowers("Wizard");
     }
-
+*/
 }

@@ -1,5 +1,7 @@
 package beholder;
 
+import java.util.Vector;
+
 import org.junit.Test;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
@@ -7,6 +9,7 @@ import org.junit.runners.JUnit4;
 
 import beholder.PlayerCharacter;
 import beholder.PlayerCharacter.*;
+import beholder.AtWillPower;
 import beholder.Cleric;
 import beholder.Fighter;
 import beholder.Paladin;
@@ -37,7 +40,7 @@ public class PlayerCharacterTest {
 
         p.rollAbilityScores();
 
-        System.out.println(p);
+        //System.out.println(p);
     }
 
     @Test
@@ -62,6 +65,9 @@ public class PlayerCharacterTest {
         r.trainSkill(Skill.ATHLETICS);
         r.trainSkill(Skill.DUNGEONEERING);
         r.trainSkill(Skill.PERCEPTION);
+
+        Vector<AtWillPower> awps = r.getAvailableAtWillPowers();
+        r.addAtWillPower(awps.elementAt(1));
 
         System.out.println(r);
     }
