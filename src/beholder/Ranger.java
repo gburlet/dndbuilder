@@ -3,6 +3,9 @@ package beholder;
 import beholder.PlayerCharacter;
 import beholder.PlayerCharacter.*;
 import beholder.AtWillPower;
+import beholder.EncounterPower;
+import beholder.DailyPower;
+import beholder.UtilityPower;
 
 import java.util.Vector;
 import java.sql.*;
@@ -50,17 +53,15 @@ public class Ranger extends PlayerCharacter {
     public Vector<AtWillPower> getAvailableAtWillPowers() {
         return this.getAvailableAtWillPowers("Ranger");
     }
-/*
-    public AtWillPower[] getAvailableDailyPowers() {
-        return this.getAvailableDailyPowers("Ranger");
-    }
-
-    public AtWillPower[] getAvailableEncounterPowers() {
+    public Vector<EncounterPower> getAvailableEncounterPowers() {
         return this.getAvailableEncounterPowers("Ranger");
     }
 
-    public AtWillPower[] getAvailableUtilityPowers() {
+    public Vector<DailyPower> getAvailableDailyPowers() {
+        return this.getAvailableDailyPowers("Ranger");
+    }
+
+    public Vector<UtilityPower> getAvailableUtilityPowers() {
         return this.getAvailableUtilityPowers("Ranger");
     }
-*/
 }

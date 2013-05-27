@@ -68,6 +68,12 @@ public class PlayerCharacterTest {
 
         Vector<AtWillPower> awps = r.getAvailableAtWillPowers();
         r.addAtWillPower(awps.elementAt(1));
+        Vector<EncounterPower> eps = r.getAvailableEncounterPowers();
+        r.addEncounterPower(eps.elementAt(0));
+        Vector<DailyPower> dps = r.getAvailableDailyPowers();
+        r.addDailyPower(dps.elementAt(0));
+        //Vector<UtilityPower> ups = r.getAvailableUtilityPowers();
+        //r.addUtilityPower(ups.elementAt(0));
 
         System.out.println(r);
     }

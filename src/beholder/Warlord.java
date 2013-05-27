@@ -3,6 +3,9 @@ package beholder;
 import beholder.PlayerCharacter;
 import beholder.PlayerCharacter.*;
 import beholder.AtWillPower;
+import beholder.EncounterPower;
+import beholder.DailyPower;
+import beholder.UtilityPower;
 
 import java.util.Vector;
 import java.sql.*;
@@ -50,17 +53,16 @@ public class Warlord extends PlayerCharacter {
     public Vector<AtWillPower> getAvailableAtWillPowers() {
         return this.getAvailableAtWillPowers("Warlord");
     }
-/*
-    public AtWillPower[] getAvailableDailyPowers() {
-        return this.getAvailableDailyPowers("Warlord");
-    }
 
-    public AtWillPower[] getAvailableEncounterPowers() {
+    public Vector<EncounterPower> getAvailableEncounterPowers() {
         return this.getAvailableEncounterPowers("Warlord");
     }
 
-    public AtWillPower[] getAvailableUtilityPowers() {
+    public Vector<DailyPower> getAvailableDailyPowers() {
+        return this.getAvailableDailyPowers("Warlord");
+    }
+
+    public Vector<UtilityPower> getAvailableUtilityPowers() {
         return this.getAvailableUtilityPowers("Warlord");
     }
-*/
 }

@@ -29,6 +29,9 @@ import java.lang.Integer;
 import java.sql.*;
 import beholder.Die;
 import beholder.AtWillPower;
+import beholder.EncounterPower;
+import beholder.DailyPower;
+import beholder.UtilityPower;
 
 /*
  * This class represents a player character (PC)
@@ -73,9 +76,9 @@ public class PlayerCharacter {
 
     // Powers: list of ids from the database
     protected Vector<AtWillPower> atwillpowers;
-    protected Vector<Integer> encounterpowers;
-    protected Vector<Integer> dailypowers;
-    protected Vector<Integer> utilitypowers;
+    protected Vector<EncounterPower> encounterpowers;
+    protected Vector<DailyPower> dailypowers;
+    protected Vector<UtilityPower> utilitypowers;
     
     // PC maitenance
     protected int numSkillTrainsLeft;
@@ -204,9 +207,9 @@ public class PlayerCharacter {
         this.skills = new int[17];
 
         this.atwillpowers = new Vector<AtWillPower>();
-        this.encounterpowers = new Vector<Integer>();
-        this.dailypowers = new Vector<Integer>();
-        this.utilitypowers = new Vector<Integer>();
+        this.encounterpowers = new Vector<EncounterPower>();
+        this.dailypowers = new Vector<DailyPower>();
+        this.utilitypowers = new Vector<UtilityPower>();
 
         // become level one
         this.levelUp();
@@ -792,35 +795,37 @@ public class PlayerCharacter {
         }
     }
 
-    /*
-    public ResultSet getAvailableEncounterPowers(String className) {
-        Statement stmt = null;
-        ResultSet res = null;
+    public Vector<EncounterPower> getAvailableEncounterPowers(String className) {
+        Vector<EncounterPower> eps = null;
 
         try {
-            stmt = this.db.createStatement();
-            String query = "SELECT * FROM EncounterPowers WHERE Book='PHB' AND Level <= " + this.level + " AND Class = '" + className + "';";
-            res = stmt.executeQuery(query);
-            while (res.next()) {
+            Statement stmt = this.db.createStatement();
+            String query = "SELECT ROWID, * FROM EncounterPowers WHERE Book='PHB' AND Level <= " + this.level + " AND Class = '" + className + "';";
+            ResultSet res = stmt.executeQuery(query);
+
+            eps = new Vector<EncounterPower>(2);
+            for (int i = 0; res.next(); i++) {
+                int id = res.getInt("ROWID");
                 String power = res.getString("Power");
-                System.out.println(power);
+                String book = res.getString("Book");
+                String pcClass = res.getString("Class");
+                int level = res.getInt("Level");
+
+                eps.add(new EncounterPower(id, power, book, pcClass, level));
             }
-        }
-        catch (Exception e) {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
-        }
-        finally {
             stmt.close();
             res.close();
         }
+        catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
 
-        return res;
+        return eps;
     }
 
-    public boolean addEncounterPower(int id) {
+    public boolean addEncounterPower(EncounterPower ep) {
         if (this.numEncounterPowersLeft > 0) {
-            this.encounterpowers.add(id);
+            this.encounterpowers.add(ep);
             return true;
         }
         else {
@@ -828,34 +833,37 @@ public class PlayerCharacter {
         }
     }
 
-    public ResultSet getAvailableDailyPowers(String className) {
-        Statement stmt = null;
-        ResultSet res = null;
+    public Vector<DailyPower> getAvailableDailyPowers(String className) {
+        Vector<DailyPower> dps = null;
 
         try {
             Statement stmt = this.db.createStatement();
-            String query = "SELECT * FROM DailyPowers WHERE Book='PHB' AND Level <= " + this.level + " AND Class = '" + className + "';";
-            res = stmt.executeQuery(query);
-            while (res.next()) {
+            String query = "SELECT ROWID, * FROM DailyPowers WHERE Book='PHB' AND Level <= " + this.level + " AND Class = '" + className + "';";
+            ResultSet res = stmt.executeQuery(query);
+
+            dps = new Vector<DailyPower>(2);
+            for (int i = 0; res.next(); i++) {
+                int id = res.getInt("ROWID");
                 String power = res.getString("Power");
-                System.out.println(power);
+                String book = res.getString("Book");
+                String pcClass = res.getString("Class");
+                int level = res.getInt("Level");
+
+                dps.add(new DailyPower(id, power, book, pcClass, level));
             }
-        }
-        catch (Exception e) {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
-        }
-        finally {
             stmt.close();
             res.close();
         }
+        catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
 
-        return res;
+        return dps;
     }
 
-    public boolean addDailyPower(int id) {
+    public boolean addDailyPower(DailyPower dp) {
         if (this.numDailyPowersLeft > 0) {
-            this.dailypowers.add(id);
+            this.dailypowers.add(dp);
             return true;
         }
         else {
@@ -863,41 +871,43 @@ public class PlayerCharacter {
         }
     }
 
-    public ResultSet getAvailableUtilityPowers(String className) {
-        Statement stmt = null;
-        ResultSet res = null;
+    public Vector<UtilityPower> getAvailableUtilityPowers(String className) {
+        Vector<UtilityPower> ups = null;
 
         try {
             Statement stmt = this.db.createStatement();
-            String query = "SELECT * FROM UtilityPowers WHERE Book='PHB' AND Level <= " + this.level + " AND Class = '" + className + "';";
-            res = stmt.executeQuery(query);
-            while (res.next()) {
+            String query = "SELECT ROWID, * FROM UtilityPowers WHERE Book='PHB' AND Level <= " + this.level + " AND Class = '" + className + "';";
+            ResultSet res = stmt.executeQuery(query);
+
+            ups = new Vector<UtilityPower>(2);
+            for (int i = 0; res.next(); i++) {
+                int id = res.getInt("ROWID");
                 String power = res.getString("Power");
-                System.out.println(power);
+                String book = res.getString("Book");
+                String pcClass = res.getString("Class");
+                int level = res.getInt("Level");
+
+                ups.add(new UtilityPower(id, power, book, pcClass, level));
             }
-        }
-        catch (Exception e) {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-              System.exit(0);
-        }
-        finally {
             stmt.close();
             res.close();
         }
+        catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
 
-        return res;
+        return ups;
     }
 
-    public boolean addUtilityPower(int id) {
+    public boolean addUtilityPower(UtilityPower up) {
         if (this.numUtilityPowersLeft > 0) {
-            this.utilitypowers.add(id);
+            this.utilitypowers.add(up);
             return true;
         }
         else {
             return false;
         }
     }
-    */
 
     /*
      * Overload toString method to print character information
@@ -921,6 +931,21 @@ public class PlayerCharacter {
         charStr += "\nAt-will Powers:";
         for (AtWillPower awp: this.atwillpowers) {
             charStr += "\n" + awp;
+        }
+
+        charStr += "\nEncounter Powers:";
+        for (EncounterPower ep: this.encounterpowers) {
+            charStr += "\n" + ep;
+        }
+
+        charStr += "\nDaily Powers:";
+        for (DailyPower dp: this.dailypowers) {
+            charStr += "\n" + dp;
+        }
+
+        charStr += "\nUtility Powers:";
+        for (UtilityPower up: this.utilitypowers) {
+            charStr += "\n" + up;
         }
 
         return charStr;

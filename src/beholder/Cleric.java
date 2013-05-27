@@ -3,6 +3,9 @@ package beholder;
 import beholder.PlayerCharacter;
 import beholder.PlayerCharacter.*;
 import beholder.AtWillPower;
+import beholder.EncounterPower;
+import beholder.DailyPower;
+import beholder.UtilityPower;
 
 import java.util.Vector;
 import java.sql.*;
@@ -47,17 +50,15 @@ public class Cleric extends PlayerCharacter {
         return this.getAvailableAtWillPowers("Cleric");
     }
 
-    /*
-    public AtWillPower[] getAvailableDailyPowers() {
-        return this.getAvailableDailyPowers("Cleric");
-    }
-
-    public AtWillPower[] getAvailableEncounterPowers() {
+    public Vector<EncounterPower> getAvailableEncounterPowers() {
         return this.getAvailableEncounterPowers("Cleric");
     }
 
-    public AtWillPower[] getAvailableUtilityPowers() {
-        return this.getAvailableUtilityPowers("Cleric");
-    }*/
+    public Vector<DailyPower> getAvailableDailyPowers() {
+        return this.getAvailableDailyPowers("Cleric");
+    }
 
+    public Vector<UtilityPower> getAvailableUtilityPowers() {
+        return this.getAvailableUtilityPowers("Cleric");
+    }
 }

@@ -3,6 +3,9 @@ package beholder;
 import beholder.PlayerCharacter;
 import beholder.PlayerCharacter.*;
 import beholder.AtWillPower;
+import beholder.EncounterPower;
+import beholder.DailyPower;
+import beholder.UtilityPower;
 
 import java.util.Vector;
 import java.sql.*;
@@ -47,16 +50,15 @@ public class Wizard extends PlayerCharacter {
         return this.getAvailableAtWillPowers("Wizard");
     }
 
-/*    public AtWillPower[] getAvailableDailyPowers() {
-        return this.getAvailableDailyPowers("Wizard");
-    }
-
-    public AtWillPower[] getAvailableEncounterPowers() {
+    public Vector<EncounterPower> getAvailableEncounterPowers() {
         return this.getAvailableEncounterPowers("Wizard");
     }
 
-    public AtWillPower[] getAvailableUtilityPowers() {
+    public Vector<DailyPower> getAvailableDailyPowers() {
+        return this.getAvailableDailyPowers("Wizard");
+    }
+
+    public Vector<UtilityPower> getAvailableUtilityPowers() {
         return this.getAvailableUtilityPowers("Wizard");
     }
-*/
 }
