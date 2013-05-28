@@ -9,7 +9,6 @@ import org.junit.runners.JUnit4;
 
 import beholder.PlayerCharacter;
 import beholder.PlayerCharacter.*;
-import beholder.AtWillPower;
 import beholder.Cleric;
 import beholder.Fighter;
 import beholder.Paladin;
@@ -74,6 +73,9 @@ public class PlayerCharacterTest {
         r.addDailyPower(dps.elementAt(0));
         //Vector<UtilityPower> ups = r.getAvailableUtilityPowers();
         //r.addUtilityPower(ups.elementAt(0));
+
+        Vector<Feat> fs = r.getAvailableFeats();
+        r.addFeat(fs.elementAt(0));
 
         System.out.println(r);
     }

@@ -6,6 +6,7 @@ import beholder.AtWillPower;
 import beholder.EncounterPower;
 import beholder.DailyPower;
 import beholder.UtilityPower;
+import beholder.Feat;
 
 import java.util.Vector;
 import java.sql.*;
@@ -63,5 +64,9 @@ public class Ranger extends PlayerCharacter {
 
     public Vector<UtilityPower> getAvailableUtilityPowers() {
         return this.getAvailableUtilityPowers("Ranger");
+    }
+
+    public Vector<Feat> getAvailableFeats() {
+        return this.getAvailableFeats("Ranger");
     }
 }

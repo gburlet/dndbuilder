@@ -1,6 +1,6 @@
 CC=javac
 PACKAGE=beholder
-SRC=src/$(PACKAGE)/{PlayerCharacter.java,Cleric.java,Fighter.java,Paladin.java,Ranger.java,Rogue.java,Warlock.java,Warlord.java,Wizard.java,Die.java,AtWillPower.java,EncounterPower.java,DailyPower.java,UtilityPower.java}
+SRC=src/$(PACKAGE)/{PlayerCharacter.java,Cleric.java,Fighter.java,Paladin.java,Ranger.java,Rogue.java,Warlock.java,Warlord.java,Wizard.java,Die.java,AtWillPower.java,EncounterPower.java,DailyPower.java,UtilityPower.java,Feat.java}
 TEST_SRC=test/src/$(PACKAGE)/PlayerCharacterTest.java
 BUILD_PATH=bin
 TEST_BUILD_PATH=test/bin

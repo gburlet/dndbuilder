@@ -32,6 +32,7 @@ import beholder.AtWillPower;
 import beholder.EncounterPower;
 import beholder.DailyPower;
 import beholder.UtilityPower;
+import beholder.Feat;
 
 /*
  * This class represents a player character (PC)
@@ -74,11 +75,12 @@ public class PlayerCharacter {
     // Skill Values
     protected int[] skills;
 
-    // Powers: list of ids from the database
     protected Vector<AtWillPower> atwillpowers;
     protected Vector<EncounterPower> encounterpowers;
     protected Vector<DailyPower> dailypowers;
     protected Vector<UtilityPower> utilitypowers;
+
+    protected Vector<Feat> feats;
     
     // PC maitenance
     protected int numSkillTrainsLeft;
@@ -210,6 +212,8 @@ public class PlayerCharacter {
         this.encounterpowers = new Vector<EncounterPower>();
         this.dailypowers = new Vector<DailyPower>();
         this.utilitypowers = new Vector<UtilityPower>();
+
+        this.feats = new Vector<Feat>();
 
         // become level one
         this.levelUp();
@@ -880,7 +884,7 @@ public class PlayerCharacter {
             ResultSet res = stmt.executeQuery(query);
 
             ups = new Vector<UtilityPower>(2);
-            for (int i = 0; res.next(); i++) {
+            while (res.next()) {
                 int id = res.getInt("ROWID");
                 String power = res.getString("Power");
                 String book = res.getString("Book");
@@ -902,6 +906,78 @@ public class PlayerCharacter {
     public boolean addUtilityPower(UtilityPower up) {
         if (this.numUtilityPowersLeft > 0) {
             this.utilitypowers.add(up);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public Vector<Feat> getAvailableFeats(String className) {
+        Vector<Feat> fs = null;
+
+        try {
+            Statement stmt = this.db.createStatement();
+            String query = "SELECT ROWID, * FROM Feats WHERE Book='PHB' AND (Level<=1 OR Level='') AND (Class='Rogue' OR Class='');";
+            ResultSet res = stmt.executeQuery(query);
+
+            fs = new Vector<Feat>(2);
+            while (res.next()) {
+                int id = res.getInt("ROWID");
+                String feat = res.getString("Feat");
+                String description = res.getString("Description");
+                String book = res.getString("Book");
+                int strength = res.getInt("Strength");
+                int constitution = res.getInt("Constitution");
+                int dexterity = res.getInt("Dexterity");
+                int intelligence = res.getInt("Intelligence");
+                int wisdom = res.getInt("Wisdom");
+                int charisma = res.getInt("Charisma");
+                int acrobatics = res.getInt("Acrobatics");
+                String races = res.getString("Races");
+                String pcClass = res.getString("Class");
+                int level = res.getInt("Level");
+                int arcana = res.getInt("Arcana");
+                int athletics = res.getInt("Athletics");
+                int bluff = res.getInt("Bluff");
+                int diplomacy = res.getInt("Diplomacy");
+                int dungeoneering = res.getInt("Dungeoneering");
+                int endurance = res.getInt("Endurance");
+                int heal = res.getInt("Heal");
+                int history = res.getInt("History");
+                int insight = res.getInt("Insight");
+                int intimidate = res.getInt("Intimidate");
+                int nature = res.getInt("Nature");
+                int perception = res.getInt("Perception");
+                int religion = res.getInt("Religion");
+                int stealth = res.getInt("Stealth");
+                int streetwise = res.getInt("Streetwise");
+                int thievery = res.getInt("Thievery");
+                int initiative = res.getInt("Initiative");
+                int speed = res.getInt("Speed");
+                int surgeValue = res.getInt("SurgeValue");
+                int armorClass = res.getInt("ArmorClass");
+                int fortitude = res.getInt("Fortitude");
+                int reflex = res.getInt("Reflex");
+                int will = res.getInt("Will");
+
+                fs.add(new Feat(id, feat, description, book, strength, constitution, dexterity, intelligence, wisdom, charisma,
+                  races, pcClass, level, acrobatics, arcana, athletics, bluff, diplomacy, dungeoneering, endurance, heal, 
+                  history, insight, intimidate, nature, perception, religion, stealth, streetwise, thievery, initiative, speed, 
+                  surgeValue, armorClass, fortitude, reflex, will));
+
+            }
+        }
+        catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return fs;
+    }
+
+    public boolean addFeat(Feat f) {
+        if (this.numFeatsLeft > 0) {
+            this.feats.add(f);
             return true;
         }
         else {
@@ -946,6 +1022,11 @@ public class PlayerCharacter {
         charStr += "\nUtility Powers:";
         for (UtilityPower up: this.utilitypowers) {
             charStr += "\n" + up;
+        }
+
+        charStr += "\nFeats:";
+        for (Feat f: this.feats) {
+            charStr += "\n" + f;
         }
 
         return charStr;
